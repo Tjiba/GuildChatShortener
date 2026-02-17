@@ -16,6 +16,7 @@ Ces commandes sont enregistrees cote client et permettent de configurer le bridg
 - `/bridgeplayercolor <couleur>` : change la couleur du pseudo joueur.
 - `/bc ...` : alias court de `/bridgecolor ...`.
 - `/bpc ...` : alias court de `/bridgeplayercolor ...`.
+- `/bridgeactivateall [off]` : active le formatage pour tous les messages de guilde (ou le desactive avec `off`).
 
 ## Couleurs accepteees
 

@@ -72,11 +72,20 @@ public class ChatHudMixin {
         if (cfg.botMCName != null && !cfg.botMCName.equalsIgnoreCase(botMC)) {
             return original; // ce n'est pas notre bot → on ne touche à rien
         }
-        if (!hasChannelMarker(payload)) {
-            return original; // pas de marqueur canal → évite de toucher aux messages guild normaux
+        boolean isBridgePayload = hasChannelMarker(payload);
+        if (!isBridgePayload && !cfg.formatAllGuild) {
+            return original; // pas de marqueur canal et mode guilde inactif → on ne touche à rien
         }
 
         // 6. Nettoyage du payload pour supporter plusieurs formats (V1/V2/V3)
+        if (!isBridgePayload) {
+            String message = payload.trim();
+            if (message.isEmpty()) return original;
+            String formatted = "§aG §8> "
+                + "§" + safeColorCode(cfg.discordNameColor) + botMC
+                + "§8: §f" + message;
+            return Text.literal(formatted);
+        }
         String cleaned = payload;
         if (cleaned.startsWith("[")) {
             int end = cleaned.indexOf("] ");

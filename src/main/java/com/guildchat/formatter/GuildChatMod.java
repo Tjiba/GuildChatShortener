@@ -43,10 +43,12 @@ public class GuildChatMod implements ClientModInitializer {
                         .executes(ctx -> {
                             BridgeConfig cfg = BridgeConfig.get();
                             String mc = cfg.botMCName != null ? cfg.botMCName : "auto";
+                            String mode = cfg.formatAllGuild ? "tous" : "bridge";
                             feedback(ctx.getSource().getClient(),
                                 "§7Bot: §e" + mc + " §7| Alias: §b" + cfg.botAlias +
                                 " §7| Couleurs: §b" + colorNameFromCode(cfg.botAliasColor) +
-                                " §7/ §3" + colorNameFromCode(cfg.discordNameColor));
+                                " §7/ §3" + colorNameFromCode(cfg.discordNameColor) +
+                                " §7| Mode: §e" + mode);
                             return 1;
                         })
                     )
@@ -66,6 +68,8 @@ public class GuildChatMod implements ClientModInitializer {
                                 "§e/bridgecolor <couleur> §7- couleur du bridge (alias: /bc)");
                             feedback(ctx.getSource().getClient(),
                                 "§e/bridgeplayercolor <couleur> §7- couleur du pseudo (alias: /bpc)");
+                            feedback(ctx.getSource().getClient(),
+                                "§e/bridgeactivateall [off] §7- activer le formatage pour toute la guilde");
                             return 1;
                         })
                     )
@@ -267,6 +271,32 @@ public class GuildChatMod implements ClientModInitializer {
                             String colorName = colorNameFromCode(code);
                             feedback(ctx.getSource().getClient(),
                                 "§aCouleur du pseudo: §" + code + colorName + " §7(&" + code + ")");
+                            return 1;
+                        })
+                    )
+            )
+        );
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+            dispatcher.register(
+                ClientCommandManager.literal("bridgeactivateall")
+                    .executes(ctx -> {
+                        BridgeConfig cfg = BridgeConfig.get();
+                        cfg.formatAllGuild = true;
+                        cfg.save();
+                        BridgeConfig.reload();
+                        feedback(ctx.getSource().getClient(),
+                            "§aFormatage guilde active pour tous les messages.");
+                        return 1;
+                    })
+                    .then(ClientCommandManager.literal("off")
+                        .executes(ctx -> {
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.formatAllGuild = false;
+                            cfg.save();
+                            BridgeConfig.reload();
+                            feedback(ctx.getSource().getClient(),
+                                "§cFormatage guilde desactive (bridge uniquement).");
                             return 1;
                         })
                     )

@@ -28,6 +28,9 @@ public class BridgeConfig {
     // Couleur du pseudo Discord (code Minecraft sans §, ex: "3" pour dark_aqua)
     public String discordNameColor = "3";
 
+    // Active le formatage pour tous les messages de guilde (pas seulement le bridge)
+    public boolean formatAllGuild = false;
+
     // ── Singleton ─────────────────────────────────────────────────────────────
     public static BridgeConfig get() {
         if (instance == null) instance = load();
