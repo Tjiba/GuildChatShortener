@@ -24,6 +24,7 @@
 ### ✨ Key Features
 
 - 🤖 **Automatic Detection** - The mod automatically detects Discord bridge messages
+- 🌍 **Multilingual Support** - Full support for English and French languages
 - 🎨 **Color Customization** - Change the colors of the bridge alias and player names
 - 🏷️ **Custom Aliases** - Replace the bot name with a short alias (e.g., "Discord", "Bridge", "DC")
 - ⚙️ **Flexible Configuration** - Intuitive in-game commands to adjust settings
@@ -105,6 +106,24 @@ Enable or disable formatting for **all** guild messages:
 ```
 /bridgeactivateall       # Enable global mode
 /bridgeactivateall off   # Disable global mode
+```
+
+### 🌍 Language Settings
+
+Change the mod's language (all messages and commands):
+
+```
+/bridgelanguage <language>
+```
+
+**Available languages**:
+- `English` or `en` - English interface
+- `Français` or `fr` - Interface française (default)
+
+**Examples**:
+```
+/bridgelanguage English    # Switch to English
+/bridgelanguage fr         # Passer au français
 ```
 
 ---

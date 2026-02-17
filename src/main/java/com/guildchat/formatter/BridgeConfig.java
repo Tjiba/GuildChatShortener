@@ -31,6 +31,15 @@ public class BridgeConfig {
     // Active le formatage pour tous les messages de guilde (pas seulement le bridge)
     public boolean formatAllGuild = false;
 
+    // Langue de l'interface (english ou french)
+    public String language = "french";
+
+    // ── Getters ───────────────────────────────────────────────────────────────
+    public Language getLanguage() {
+        Language lang = Language.fromString(language);
+        return lang != null ? lang : Language.FRENCH;
+    }
+
     // ── Singleton ─────────────────────────────────────────────────────────────
     public static BridgeConfig get() {
         if (instance == null) instance = load();

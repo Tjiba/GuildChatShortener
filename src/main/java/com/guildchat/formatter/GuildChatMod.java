@@ -15,7 +15,7 @@ public class GuildChatMod implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        LOGGER.info("Guild Chat Formatter chargé !");
+        LOGGER.info(Messages.get(Messages.MOD_LOADED));
         BridgeConfig.get(); // initialise la config
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
@@ -33,7 +33,7 @@ public class GuildChatMod implements ClientModInitializer {
                             cfg.save();
                             BridgeConfig.reload();
                             feedback(ctx.getSource().getClient(),
-                                "§aBot bridge réinitialisé. Détection automatique activée.");
+                                Messages.get(Messages.BRIDGE_RESET));
                             return 1;
                         })
                     )
@@ -43,12 +43,15 @@ public class GuildChatMod implements ClientModInitializer {
                         .executes(ctx -> {
                             BridgeConfig cfg = BridgeConfig.get();
                             String mc = cfg.botMCName != null ? cfg.botMCName : "auto";
-                            String mode = cfg.formatAllGuild ? "tous" : "bridge";
+                            String mode = cfg.formatAllGuild 
+                                ? Messages.get(Messages.BRIDGE_STATUS_MODE_ALL)
+                                : Messages.get(Messages.BRIDGE_STATUS_MODE_BRIDGE);
                             feedback(ctx.getSource().getClient(),
-                                "§7Bot: §e" + mc + " §7| Alias: §b" + cfg.botAlias +
-                                " §7| Couleurs: §b" + colorNameFromCode(cfg.botAliasColor) +
-                                " §7/ §3" + colorNameFromCode(cfg.discordNameColor) +
-                                " §7| Mode: §e" + mode);
+                                Messages.format(Messages.BRIDGE_STATUS,
+                                    mc, cfg.botAlias,
+                                    colorNameFromCode(cfg.botAliasColor),
+                                    colorNameFromCode(cfg.discordNameColor),
+                                    mode));
                             return 1;
                         })
                     )
@@ -56,20 +59,14 @@ public class GuildChatMod implements ClientModInitializer {
                     // /bridge help → aide courte
                     .then(ClientCommandManager.literal("help")
                         .executes(ctx -> {
-                            feedback(ctx.getSource().getClient(),
-                                "§e/bridgesetup <nomMC> <alias> §7- definir le bot et l'alias");
-                            feedback(ctx.getSource().getClient(),
-                                "§e/bridge status §7- afficher la config");
-                            feedback(ctx.getSource().getClient(),
-                                "§e/bridge reset §7- reinitialiser tout");
-                            feedback(ctx.getSource().getClient(),
-                                "§e/bridgename <alias> §7- changer l'alias");
-                            feedback(ctx.getSource().getClient(),
-                                "§e/bridgecolor <couleur> §7- couleur du bridge (alias: /bc)");
-                            feedback(ctx.getSource().getClient(),
-                                "§e/bridgeplayercolor <couleur> §7- couleur du pseudo (alias: /bpc)");
-                            feedback(ctx.getSource().getClient(),
-                                "§e/bridgeactivateall [off] §7- activer le formatage pour toute la guilde");
+                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_BRIDGESETUP));
+                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_STATUS));
+                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_RESET));
+                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_NAME));
+                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_COLOR));
+                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_PLAYERCOLOR));
+                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_ACTIVATEALL));
+                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_LANGUAGE));
                             return 1;
                         })
                     )
@@ -92,7 +89,7 @@ public class GuildChatMod implements ClientModInitializer {
                                 BridgeConfig.reload();
 
                                 feedback(ctx.getSource().getClient(),
-                                    "§aBot bridge defini : §e" + nomMC + " §7→ §b" + alias);
+                                    Messages.format(Messages.BRIDGE_DEFINED, nomMC, alias));
                                 return 1;
                             })
                         )
@@ -110,7 +107,7 @@ public class GuildChatMod implements ClientModInitializer {
                             cfg.save();
                             BridgeConfig.reload();
                             feedback(ctx.getSource().getClient(),
-                                "§aNom du bridge reinitialise: §bBridge");
+                                Messages.get(Messages.BRIDGE_NAME_RESET));
                             return 1;
                         })
                     )
@@ -122,7 +119,7 @@ public class GuildChatMod implements ClientModInitializer {
                             cfg.save();
                             BridgeConfig.reload();
                             feedback(ctx.getSource().getClient(),
-                                "§aNom du bridge: §b" + alias);
+                                Messages.format(Messages.BRIDGE_NAME_SET, alias));
                             return 1;
                         })
                     )
@@ -139,7 +136,7 @@ public class GuildChatMod implements ClientModInitializer {
                             cfg.save();
                             BridgeConfig.reload();
                             feedback(ctx.getSource().getClient(),
-                                "§aCouleur du bridge reinitialisee: §b" + colorNameFromCode("b") + " §7(&b)");
+                                Messages.format(Messages.COLOR_BRIDGE_RESET, colorNameFromCode("b")));
                             return 1;
                         })
                     )
@@ -149,8 +146,7 @@ public class GuildChatMod implements ClientModInitializer {
                             String code = resolveColorCode(input);
                             if (code == null) {
                                 feedback(ctx.getSource().getClient(),
-                                    "§cCouleur inconnue: §f" + input +
-                                    " §7(valeurs: " + colorHelpList() + ")");
+                                    Messages.format(Messages.COLOR_UNKNOWN, input, colorHelpList()));
                                 return 0;
                             }
                             BridgeConfig cfg = BridgeConfig.get();
@@ -159,7 +155,7 @@ public class GuildChatMod implements ClientModInitializer {
                             BridgeConfig.reload();
                             String colorName = colorNameFromCode(code);
                             feedback(ctx.getSource().getClient(),
-                                "§aCouleur du bridge: §" + code + colorName + " §7(&" + code + ")");
+                                Messages.format(Messages.COLOR_BRIDGE_SET, code, colorName, code));
                             return 1;
                         })
                     )
@@ -176,7 +172,7 @@ public class GuildChatMod implements ClientModInitializer {
                             cfg.save();
                             BridgeConfig.reload();
                             feedback(ctx.getSource().getClient(),
-                                "§aCouleur du pseudo reinitialisee: §3" + colorNameFromCode("3") + " §7(&3)");
+                                Messages.format(Messages.COLOR_PLAYER_RESET, colorNameFromCode("3")));
                             return 1;
                         })
                     )
@@ -186,8 +182,7 @@ public class GuildChatMod implements ClientModInitializer {
                             String code = resolveColorCode(input);
                             if (code == null) {
                                 feedback(ctx.getSource().getClient(),
-                                    "§cCouleur inconnue: §f" + input +
-                                    " §7(valeurs: " + colorHelpList() + ")");
+                                    Messages.format(Messages.COLOR_UNKNOWN, input, colorHelpList()));
                                 return 0;
                             }
                             BridgeConfig cfg = BridgeConfig.get();
@@ -196,7 +191,7 @@ public class GuildChatMod implements ClientModInitializer {
                             BridgeConfig.reload();
                             String colorName = colorNameFromCode(code);
                             feedback(ctx.getSource().getClient(),
-                                "§aCouleur du pseudo: §" + code + colorName + " §7(&" + code + ")");
+                                Messages.format(Messages.COLOR_PLAYER_SET, code, colorName, code));
                             return 1;
                         })
                     )
@@ -213,7 +208,7 @@ public class GuildChatMod implements ClientModInitializer {
                             cfg.save();
                             BridgeConfig.reload();
                             feedback(ctx.getSource().getClient(),
-                                "§aCouleur du bridge reinitialisee: §b" + colorNameFromCode("b") + " §7(&b)");
+                                Messages.format(Messages.COLOR_BRIDGE_RESET, colorNameFromCode("b")));
                             return 1;
                         })
                     )
@@ -223,8 +218,7 @@ public class GuildChatMod implements ClientModInitializer {
                             String code = resolveColorCode(input);
                             if (code == null) {
                                 feedback(ctx.getSource().getClient(),
-                                    "§cCouleur inconnue: §f" + input +
-                                    " §7(valeurs: " + colorHelpList() + ")");
+                                    Messages.format(Messages.COLOR_UNKNOWN, input, colorHelpList()));
                                 return 0;
                             }
                             BridgeConfig cfg = BridgeConfig.get();
@@ -233,7 +227,7 @@ public class GuildChatMod implements ClientModInitializer {
                             BridgeConfig.reload();
                             String colorName = colorNameFromCode(code);
                             feedback(ctx.getSource().getClient(),
-                                "§aCouleur du bridge: §" + code + colorName + " §7(&" + code + ")");
+                                Messages.format(Messages.COLOR_BRIDGE_SET, code, colorName, code));
                             return 1;
                         })
                     )
@@ -250,7 +244,7 @@ public class GuildChatMod implements ClientModInitializer {
                             cfg.save();
                             BridgeConfig.reload();
                             feedback(ctx.getSource().getClient(),
-                                "§aCouleur du pseudo reinitialisee: §3" + colorNameFromCode("3") + " §7(&3)");
+                                Messages.format(Messages.COLOR_PLAYER_RESET, colorNameFromCode("3")));
                             return 1;
                         })
                     )
@@ -260,8 +254,7 @@ public class GuildChatMod implements ClientModInitializer {
                             String code = resolveColorCode(input);
                             if (code == null) {
                                 feedback(ctx.getSource().getClient(),
-                                    "§cCouleur inconnue: §f" + input +
-                                    " §7(valeurs: " + colorHelpList() + ")");
+                                    Messages.format(Messages.COLOR_UNKNOWN, input, colorHelpList()));
                                 return 0;
                             }
                             BridgeConfig cfg = BridgeConfig.get();
@@ -270,7 +263,7 @@ public class GuildChatMod implements ClientModInitializer {
                             BridgeConfig.reload();
                             String colorName = colorNameFromCode(code);
                             feedback(ctx.getSource().getClient(),
-                                "§aCouleur du pseudo: §" + code + colorName + " §7(&" + code + ")");
+                                Messages.format(Messages.COLOR_PLAYER_SET, code, colorName, code));
                             return 1;
                         })
                     )
@@ -286,7 +279,7 @@ public class GuildChatMod implements ClientModInitializer {
                         cfg.save();
                         BridgeConfig.reload();
                         feedback(ctx.getSource().getClient(),
-                            "§aFormatage guilde active pour tous les messages.");
+                            Messages.get(Messages.FORMAT_ALL_ENABLED));
                         return 1;
                     })
                     .then(ClientCommandManager.literal("off")
@@ -296,7 +289,32 @@ public class GuildChatMod implements ClientModInitializer {
                             cfg.save();
                             BridgeConfig.reload();
                             feedback(ctx.getSource().getClient(),
-                                "§cFormatage guilde desactive (bridge uniquement).");
+                                Messages.get(Messages.FORMAT_ALL_DISABLED));
+                            return 1;
+                        })
+                    )
+            )
+        );
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+            dispatcher.register(
+                ClientCommandManager.literal("bridgelanguage")
+                    .then(ClientCommandManager.argument("langue", StringArgumentType.greedyString())
+                        .executes(ctx -> {
+                            String input = StringArgumentType.getString(ctx, "langue");
+                            Language lang = Language.fromString(input);
+                            if (lang == null) {
+                                feedback(ctx.getSource().getClient(),
+                                    Messages.format(Messages.LANGUAGE_UNKNOWN, input, 
+                                        Messages.get(Messages.LANGUAGE_AVAILABLE)));
+                                return 0;
+                            }
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.language = lang.name().toLowerCase();
+                            cfg.save();
+                            BridgeConfig.reload();
+                            feedback(ctx.getSource().getClient(),
+                                Messages.format(Messages.LANGUAGE_SET, lang.getDisplayName()));
                             return 1;
                         })
                     )
@@ -341,31 +359,38 @@ public class GuildChatMod implements ClientModInitializer {
     }
 
     private static String colorHelpList() {
-        return "noir (&0), bleu fonce (&1), vert fonce (&2), cyan fonce (&3), rouge fonce (&4), " +
-            "violet fonce (&5), or (&6), gris (&7), gris fonce (&8), bleu (&9), vert (&a), " +
-            "cyan (&b), rouge (&c), rose clair (&d), jaune (&e), blanc (&f)";
+        Language lang = BridgeConfig.get().getLanguage();
+        if (lang == Language.ENGLISH) {
+            return "black (&0), dark blue (&1), dark green (&2), dark cyan (&3), dark red (&4), " +
+                "dark purple (&5), gold (&6), gray (&7), dark gray (&8), blue (&9), green (&a), " +
+                "cyan (&b), red (&c), light purple (&d), yellow (&e), white (&f)";
+        } else {
+            return "noir (&0), bleu foncé (&1), vert foncé (&2), cyan foncé (&3), rouge foncé (&4), " +
+                "violet foncé (&5), or (&6), gris (&7), gris foncé (&8), bleu (&9), vert (&a), " +
+                "cyan (&b), rouge (&c), rose clair (&d), jaune (&e), blanc (&f)";
+        }
     }
 
     private static String colorNameFromCode(String code) {
         String safe = safeColorCode(code);
         return switch (safe) {
-            case "0" -> "noir";
-            case "1" -> "bleu fonce";
-            case "2" -> "vert fonce";
-            case "3" -> "cyan fonce";
-            case "4" -> "rouge fonce";
-            case "5" -> "violet fonce";
-            case "6" -> "or";
-            case "7" -> "gris";
-            case "8" -> "gris fonce";
-            case "9" -> "bleu";
-            case "a" -> "vert";
-            case "b" -> "cyan";
-            case "c" -> "rouge";
-            case "d" -> "rose clair";
-            case "e" -> "jaune";
-            case "f" -> "blanc";
-            default -> "cyan";
+            case "0" -> Messages.get(Messages.COLOR_BLACK);
+            case "1" -> Messages.get(Messages.COLOR_DARK_BLUE);
+            case "2" -> Messages.get(Messages.COLOR_DARK_GREEN);
+            case "3" -> Messages.get(Messages.COLOR_DARK_AQUA);
+            case "4" -> Messages.get(Messages.COLOR_DARK_RED);
+            case "5" -> Messages.get(Messages.COLOR_DARK_PURPLE);
+            case "6" -> Messages.get(Messages.COLOR_GOLD);
+            case "7" -> Messages.get(Messages.COLOR_GRAY);
+            case "8" -> Messages.get(Messages.COLOR_DARK_GRAY);
+            case "9" -> Messages.get(Messages.COLOR_BLUE);
+            case "a" -> Messages.get(Messages.COLOR_GREEN);
+            case "b" -> Messages.get(Messages.COLOR_AQUA);
+            case "c" -> Messages.get(Messages.COLOR_RED);
+            case "d" -> Messages.get(Messages.COLOR_LIGHT_PURPLE);
+            case "e" -> Messages.get(Messages.COLOR_YELLOW);
+            case "f" -> Messages.get(Messages.COLOR_WHITE);
+            default -> Messages.get(Messages.COLOR_AQUA);
         };
     }
 }

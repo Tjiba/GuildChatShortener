@@ -24,6 +24,7 @@
 ### ✨ Fonctionnalités principales
 
 - 🤖 **Détection automatique** - Le mod détecte automatiquement les messages du bridge Discord
+- 🌍 **Support multilingue** - Support complet de l'anglais et du français
 - 🎨 **Personnalisation des couleurs** - Changez les couleurs de l'alias du bridge et des pseudos
 - 🏷️ **Alias personnalisable** - Remplacez le nom du bot par un alias court (ex: "Discord", "Bridge", "DC")
 - ⚙️ **Configuration flexible** - Commandes intuitives pour ajuster la configuration en jeu
@@ -105,6 +106,24 @@ Active ou désactive le formatage pour **tous** les messages de la guilde :
 ```
 /bridgeactivateall       # Active le mode global
 /bridgeactivateall off   # Désactive le mode global
+```
+
+### 🌍 Paramètres de langue
+
+Changez la langue du mod (tous les messages et commandes) :
+
+```
+/bridgelanguage <langue>
+```
+
+**Langues disponibles** :
+- `English` ou `en` - Interface anglaise
+- `Français` ou `fr` - Interface française (par défaut)
+
+**Exemples** :
+```
+/bridgelanguage English    # Switch to English
+/bridgelanguage fr         # Passer au français
 ```
 
 ---
