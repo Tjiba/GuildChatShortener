@@ -6,6 +6,9 @@
 /.idea/
 *.iml
 /.vscode/
+.classpath
+.project
+.settings/
 
 # Runtime/dev outputs
 /run/
@@ -15,3 +18,4 @@
 # OS cruft
 .DS_Store
 Thumbs.db
+*.log

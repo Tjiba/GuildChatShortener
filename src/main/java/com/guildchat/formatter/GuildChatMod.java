@@ -135,81 +135,47 @@ public class GuildChatMod implements ClientModInitializer {
         String normalized = input.toLowerCase().replace('-', '_');
         if (normalized.startsWith("§")) normalized = normalized.substring(1);
         if (normalized.length() == 1 && normalized.matches("[0-9a-f]")) return normalized;
-        switch (normalized) {
-            case "black":
-            case "noir":
-                return "0";
-            case "dark_blue":
-            case "bleu_fonce":
-                return "1";
-            case "dark_green":
-            case "vert_fonce":
-                return "2";
-            case "dark_aqua":
-            case "cyan_fonce":
-                return "3";
-            case "dark_red":
-            case "rouge_fonce":
-                return "4";
-            case "dark_purple":
-            case "violet_fonce":
-                return "5";
-            case "gold":
-            case "or":
-                return "6";
-            case "gray":
-            case "gris":
-            case "gris_clair":
-                return "7";
-            case "dark_gray":
-            case "gris_fonce":
-                return "8";
-            case "blue":
-            case "bleu":
-                return "9";
-            case "green":
-            case "vert":
-                return "a";
-            case "aqua":
-            case "cyan":
-                return "b";
-            case "red":
-            case "rouge":
-                return "c";
-            case "light_purple":
-            case "rose_clair":
-                return "d";
-            case "yellow":
-            case "jaune":
-                return "e";
-            case "white":
-            case "blanc":
-                return "f";
-            default:
-                return null;
-        }
+        return switch (normalized) {
+            case "black", "noir" -> "0";
+            case "dark_blue", "bleu_fonce" -> "1";
+            case "dark_green", "vert_fonce" -> "2";
+            case "dark_aqua", "cyan_fonce" -> "3";
+            case "dark_red", "rouge_fonce" -> "4";
+            case "dark_purple", "violet_fonce" -> "5";
+            case "gold", "or" -> "6";
+            case "gray", "gris", "gris_clair" -> "7";
+            case "dark_gray", "gris_fonce" -> "8";
+            case "blue", "bleu" -> "9";
+            case "green", "vert" -> "a";
+            case "aqua", "cyan" -> "b";
+            case "red", "rouge" -> "c";
+            case "light_purple", "rose_clair" -> "d";
+            case "yellow", "jaune" -> "e";
+            case "white", "blanc" -> "f";
+            default -> null;
+        };
     }
 
     private static String colorNameFromCode(String code) {
         String safe = safeColorCode(code);
-        switch (safe) {
-            case "0": return "black";
-            case "1": return "dark_blue";
-            case "2": return "dark_green";
-            case "3": return "dark_aqua";
-            case "4": return "dark_red";
-            case "5": return "dark_purple";
-            case "6": return "gold";
-            case "7": return "gray";
-            case "8": return "dark_gray";
-            case "9": return "blue";
-            case "a": return "green";
-            case "b": return "aqua";
-            case "c": return "red";
-            case "d": return "light_purple";
-            case "e": return "yellow";
-            case "f": return "white";
-            default: return "aqua";
-        }
+        return switch (safe) {
+            case "0" -> "black";
+            case "1" -> "dark_blue";
+            case "2" -> "dark_green";
+            case "3" -> "dark_aqua";
+            case "4" -> "dark_red";
+            case "5" -> "dark_purple";
+            case "6" -> "gold";
+            case "7" -> "gray";
+            case "8" -> "dark_gray";
+            case "9" -> "blue";
+            case "a" -> "green";
+            case "b" -> "aqua";
+            case "c" -> "red";
+            case "d" -> "light_purple";
+            case "e" -> "yellow";
+            case "f" -> "white";
+            default -> "aqua";
+        };
     }
 }
