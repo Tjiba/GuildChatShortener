@@ -42,7 +42,7 @@ public class ChatHudMixin {
     //   Groupe 4 = reste du message (payload)
     @Unique
     private static final Pattern BRIDGE_HEADER = Pattern.compile(
-        "^Guild > (?:\\[([A-Z+]+)] )?([\\w]+)(?: \\[(GM|OFFICER)])?: (.+)$"
+        "^Guild > (?:\\[([A-Z+]+)] )?([\\w]+)(?: \\[([A-Za-z0-9+_]+)])?: (.+)$"
     );
 
     @ModifyVariable(
@@ -72,7 +72,7 @@ public class ChatHudMixin {
         if (cfg.botMCName != null && !cfg.botMCName.equalsIgnoreCase(botMC)) {
             return original; // ce n'est pas notre bot → on ne touche à rien
         }
-        if (cfg.botMCName == null && !hasChannelMarker(payload)) {
+        if (!hasChannelMarker(payload)) {
             return original; // pas de marqueur canal → évite de toucher aux messages guild normaux
         }
 
