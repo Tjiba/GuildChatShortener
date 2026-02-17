@@ -25,3 +25,13 @@ Le parametre `<couleur>` accepte un nom FR/EN ou un code `&`/`§`.
 - noir (&0), bleu fonce (&1), vert fonce (&2), cyan fonce (&3), rouge fonce (&4)
 - violet fonce (&5), or (&6), gris (&7), gris fonce (&8), bleu (&9)
 - vert (&a), cyan (&b), rouge (&c), rose clair (&d), jaune (&e), blanc (&f)
+
+## Release GitHub
+
+Build:
+
+```cmd
+./gradlew build
+```
+
+Le jar a publier se trouve dans `build/libs/` (ex: `guildchat-formatter-1.0.0.jar`).
