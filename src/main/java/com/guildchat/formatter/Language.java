@@ -16,10 +16,6 @@ public enum Language {
         return displayName;
     }
 
-    public String getCode() {
-        return code;
-    }
-
     public static Language fromString(String input) {
         if (input == null) return ENGLISH; // Default
         String normalized = input.toLowerCase().trim();

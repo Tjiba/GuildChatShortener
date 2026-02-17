@@ -21,7 +21,6 @@ public class Messages {
     public static final String COLOR_PLAYER_RESET = "color.player.reset";
     public static final String COLOR_PLAYER_SET = "color.player.set";
     public static final String COLOR_UNKNOWN = "color.unknown";
-    public static final String COLOR_VALUES = "color.values";
     public static final String FORMAT_ALL_ENABLED = "format.all.enabled";
     public static final String FORMAT_ALL_DISABLED = "format.all.disabled";
     public static final String LANGUAGE_SET = "language.set";
