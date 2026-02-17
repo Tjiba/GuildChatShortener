@@ -1,17 +1,19 @@
-<p align="center">
-  <h1 align="center">🎮 GuildChat Shortener</h1>
-  <h3 align="center">Fabric mod to shorten and customize Discord bridge messages in Hypixel guilds</h3>
-  <p align="center">
-    <a href="https://www.minecraft.net/"><img src="https://img.shields.io/badge/Minecraft-1.21-brightgreen.svg" alt="Minecraft"></a>
-    <a href="https://fabricmc.net/"><img src="https://img.shields.io/badge/Fabric-0.18.4-orange.svg" alt="Fabric"></a>
-    <a href="https://www.oracle.com/java/"><img src="https://img.shields.io/badge/Java-21-blue.svg" alt="Java"></a>
-    <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"></a>
-  </p>
-  <p align="center">
-    <strong>English</strong> | <a href="README.fr.md">Français</a>
-  </p>
-  <hr>
-</p>
+<div align="center">
+
+# 🎮 GuildChat Shortener
+
+### Fabric mod to shorten and customize Discord bridge messages in Hypixel guilds
+
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21-brightgreen.svg)](https://www.minecraft.net/)
+[![Fabric](https://img.shields.io/badge/Fabric-0.18.4-orange.svg)](https://fabricmc.net/)
+[![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+**English** | [Français](README.fr.md)
+
+---
+
+</div>
 
 ## 📖 Description
 
@@ -183,11 +185,10 @@ Developed with ❤️ by **[Tjiba](https://github.com/Tjiba)** (MeteoFrance in-g
 
 ---
 
-<p align="center">
-  <h3 align="center">⭐ If this mod is useful to you, feel free to give it a star!</h3>
-  <p align="center">
-    <a href="https://github.com/Tjiba/GuildChatShortener/releases">Download</a> • 
-    <a href="https://github.com/Tjiba/GuildChatShortener/issues">Report a Bug</a> • 
-    <a href="https://github.com/Tjiba/GuildChatShortener/issues">Request a Feature</a>
-  </p>
-</p>
+<div align="center">
+
+### ⭐ If this mod is useful to you, feel free to give it a star!
+
+[Download](https://github.com/Tjiba/GuildChatShortener/releases) • [Report a Bug](https://github.com/Tjiba/GuildChatShortener/issues) • [Request a Feature](https://github.com/Tjiba/GuildChatShortener/issues)
+
+</div>
