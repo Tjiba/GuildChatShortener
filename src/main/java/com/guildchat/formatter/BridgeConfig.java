@@ -50,10 +50,7 @@ public class BridgeConfig {
 
     public void save() {
         try {
-            File dir = FILE.getParent().toFile();
-            if (!dir.exists() && !dir.mkdirs()) {
-                GuildChatMod.LOGGER.warn("Impossible de créer le dossier config: " + dir.getAbsolutePath());
-            }
+            FILE.getParent().toFile().mkdirs();
             try (FileWriter w = new FileWriter(FILE.toFile())) {
                 GSON.toJson(this, w);
             }

@@ -2,9 +2,10 @@ package com.guildchat.formatter.mixin;
 
 import com.guildchat.formatter.BridgeConfig;
 import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.gui.hud.MessageIndicator;
+import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
@@ -32,7 +33,6 @@ import java.util.regex.Pattern;
 public class ChatHudMixin {
 
     // Supprime tous les codes couleur Minecraft (§0-§9, §a-§f, §k-§r)
-    @Unique
     private static final Pattern COLOR_CODE = Pattern.compile("§[0-9a-fk-orA-FK-OR]");
 
     // Pattern bridge :
@@ -41,9 +41,8 @@ public class ChatHudMixin {
     //   Groupe 3 = rôle guild : GM ou OFFICER (optionnel)
     //   Groupe 4 = pseudo Discord
     //   Groupe 5 = message
-    @Unique
     private static final Pattern BRIDGE_FULL = Pattern.compile(
-        "^Guild > (?:\\[([A-Z+]+)] )?([\\w]+)(?: \\[(GM|OFFICER)])?: (?:\\[[^]]+] )?(?:[A-Z] > )?([^:]+?): (.+)$"
+        "^Guild > (?:\\[([A-Z+]+)] )?([\\w]+)(?: \\[(GM|OFFICER)])?: (?:\\[[^\\]]+] )?(?:[A-Z] > )?([^:]+?): (.+)$"
     );
 
     @ModifyVariable(
@@ -67,6 +66,7 @@ public class ChatHudMixin {
         // 4. Extraction des groupes
         // String rang    = m.group(1); // ex: "MVP++"  — non utilisé dans l'affichage
         String botMC   = m.group(2); // ex: "KetroX"
+        String role    = m.group(3); // ex: "GM" ou null
         String discord = m.group(4); // ex: "MeteoFrance"
         String message = m.group(5); // ex: "test"
 
@@ -78,16 +78,16 @@ public class ChatHudMixin {
 
         // 6. Construction du message formaté
         //    Format : "G > Bridge > PseudoDiscord: message"
-        String formatted = "§aG §8> "
-            + "§" + safeColorCode(cfg.botAliasColor) + cfg.botAlias
-            + " §8> "
-            + "§f" + discord
-            + "§8: §f" + message;
+        StringBuilder sb = new StringBuilder();
+        sb.append("§aG §8> ");                          // préfixe guild vert
+        sb.append("§").append(safeColorCode(cfg.botAliasColor)).append(cfg.botAlias);
+        sb.append(" §8> ");
+        sb.append("§f").append(discord);                 // pseudo Discord en blanc
+        sb.append("§8: §f").append(message);             // message
 
-        return Text.literal(formatted);
+        return Text.literal(sb.toString());
     }
 
-    @Unique
     private static String safeColorCode(String code) {
         if (code == null || code.isEmpty()) return "b";
         return code.substring(0, 1).toLowerCase();
