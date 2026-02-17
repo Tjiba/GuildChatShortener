@@ -188,7 +188,11 @@ French Mode:
 3. Check config file: `.minecraft/config/guildchat-formatter.json`
    ```json
    {
-     ...
+     "botMCName": null,
+     "botAlias": "Bridge",
+     "botAliasColor": "b",
+     "discordNameColor": "3",
+     "formatAllGuild": false,
      "language": "french"
    }
    ```
