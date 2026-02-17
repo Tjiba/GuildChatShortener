@@ -1,4 +1,4 @@
-<div style="text-align: center;">
+<div align="center">
 
 # 🎮 GuildChat Shortener
 
@@ -15,7 +15,7 @@
 
 </div>
 
-------
+---
 
 ## 📖 Description
 
@@ -206,7 +206,7 @@ Developed with ❤️ by **[Tjiba](https://github.com/Tjiba)** (MeteoFrance in-g
 
 ---
 
-<div style="text-align: center;">
+<div align="center">
 
 ### ⭐ If this mod is useful to you, feel free to give it a star!
 
