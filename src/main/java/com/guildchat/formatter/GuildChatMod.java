@@ -19,32 +19,8 @@ public class GuildChatMod implements ClientModInitializer {
         BridgeConfig.get(); // initialise la config
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
-
-            // /bridge <nomMC> <alias>
-            // Ex: /bridge KetroX Bridge
-            // Ex: /bridge Henry MonBridge
             dispatcher.register(
                 ClientCommandManager.literal("bridge")
-
-                    // /bridge <nomMC> <alias>
-                    .then(ClientCommandManager.argument("nomMC", StringArgumentType.word())
-                        .then(ClientCommandManager.argument("alias", StringArgumentType.word())
-                            .executes(ctx -> {
-                                String nomMC = StringArgumentType.getString(ctx, "nomMC");
-                                String alias  = StringArgumentType.getString(ctx, "alias");
-
-                                BridgeConfig cfg = BridgeConfig.get();
-                                cfg.botMCName = nomMC;
-                                cfg.botAlias  = alias;
-                                cfg.save();
-                                BridgeConfig.reload();
-
-                                feedback(ctx.getSource().getClient(),
-                                    "§aBot bridge défini : §e" + nomMC + " §7→ §b" + alias);
-                                return 1;
-                            })
-                        )
-                    )
 
                     // /bridge reset  → détection auto
                     .then(ClientCommandManager.literal("reset")
@@ -53,6 +29,7 @@ public class GuildChatMod implements ClientModInitializer {
                             cfg.botMCName = null;
                             cfg.botAlias  = "Bridge";
                             cfg.botAliasColor = "b";
+                            cfg.discordNameColor = "3";
                             cfg.save();
                             BridgeConfig.reload();
                             feedback(ctx.getSource().getClient(),
@@ -67,9 +44,30 @@ public class GuildChatMod implements ClientModInitializer {
                             BridgeConfig cfg = BridgeConfig.get();
                             String mc = cfg.botMCName != null ? "§e" + cfg.botMCName : "§7auto";
                             String colorName = colorNameFromCode(cfg.botAliasColor);
+                            String pseudoColorName = colorNameFromCode(cfg.discordNameColor);
                             feedback(ctx.getSource().getClient(),
                                 "§7Bot MC: " + mc + "  §7Alias: §" + safeColorCode(cfg.botAliasColor) + cfg.botAlias +
-                                "  §7Couleur: §e" + colorName);
+                                "  §7Couleur alias: §e" + colorName +
+                                "  §7Couleur pseudo: §e" + pseudoColorName);
+                            return 1;
+                        })
+                    )
+
+                    // /bridge help → aide courte
+                    .then(ClientCommandManager.literal("help")
+                        .executes(ctx -> {
+                            feedback(ctx.getSource().getClient(),
+                                "§e/bridgesetup <nomMC> <alias> §7- definir le bot et l'alias");
+                            feedback(ctx.getSource().getClient(),
+                                "§e/bridge status §7- afficher la config");
+                            feedback(ctx.getSource().getClient(),
+                                "§e/bridge reset §7- reinitialiser tout");
+                            feedback(ctx.getSource().getClient(),
+                                "§e/bridgename <alias> §7- changer l'alias");
+                            feedback(ctx.getSource().getClient(),
+                                "§e/bridgecolor <couleur> §7- couleur du bridge (alias: /bc)");
+                            feedback(ctx.getSource().getClient(),
+                                "§e/bridgeplayercolor <couleur> §7- couleur du pseudo (alias: /bpc)");
                             return 1;
                         })
                     )
@@ -78,7 +76,42 @@ public class GuildChatMod implements ClientModInitializer {
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
             dispatcher.register(
+                ClientCommandManager.literal("bridgesetup")
+                    .then(ClientCommandManager.argument("nomMC", StringArgumentType.word())
+                        .then(ClientCommandManager.argument("alias", StringArgumentType.greedyString())
+                            .executes(ctx -> {
+                                String nomMC = StringArgumentType.getString(ctx, "nomMC");
+                                String alias  = StringArgumentType.getString(ctx, "alias");
+
+                                BridgeConfig cfg = BridgeConfig.get();
+                                cfg.botMCName = nomMC;
+                                cfg.botAlias  = alias;
+                                cfg.save();
+                                BridgeConfig.reload();
+
+                                feedback(ctx.getSource().getClient(),
+                                    "§aBot bridge defini : §e" + nomMC + " §7→ §b" + alias);
+                                return 1;
+                            })
+                        )
+                    )
+            )
+        );
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+            dispatcher.register(
                 ClientCommandManager.literal("bridgename")
+                    .then(ClientCommandManager.literal("reset")
+                        .executes(ctx -> {
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.botAlias = "Bridge";
+                            cfg.save();
+                            BridgeConfig.reload();
+                            feedback(ctx.getSource().getClient(),
+                                "§aNom du bridge reinitialise: §bBridge");
+                            return 1;
+                        })
+                    )
                     .then(ClientCommandManager.argument("alias", StringArgumentType.greedyString())
                         .executes(ctx -> {
                             String alias = StringArgumentType.getString(ctx, "alias");
@@ -97,22 +130,145 @@ public class GuildChatMod implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
             dispatcher.register(
                 ClientCommandManager.literal("bridgecolor")
-                    .then(ClientCommandManager.argument("couleur", StringArgumentType.word())
+                    .then(ClientCommandManager.literal("reset")
+                        .executes(ctx -> {
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.botAliasColor = "b";
+                            cfg.save();
+                            BridgeConfig.reload();
+                            feedback(ctx.getSource().getClient(),
+                                "§aCouleur du bridge reinitialisee: §b" + colorNameFromCode("b") + " §7(&b)");
+                            return 1;
+                        })
+                    )
+                    .then(ClientCommandManager.argument("couleur", StringArgumentType.greedyString())
                         .executes(ctx -> {
                             String input = StringArgumentType.getString(ctx, "couleur");
                             String code = resolveColorCode(input);
                             if (code == null) {
                                 feedback(ctx.getSource().getClient(),
                                     "§cCouleur inconnue: §f" + input +
-                                    " §7(ex: blue, red, aqua, yellow, dark_red)");
+                                    " §7(valeurs: " + colorHelpList() + ")");
                                 return 0;
                             }
                             BridgeConfig cfg = BridgeConfig.get();
                             cfg.botAliasColor = code;
                             cfg.save();
                             BridgeConfig.reload();
+                            String colorName = colorNameFromCode(code);
                             feedback(ctx.getSource().getClient(),
-                                "§aCouleur du bridge: §" + code + input.toLowerCase());
+                                "§aCouleur du bridge: §" + code + colorName + " §7(&" + code + ")");
+                            return 1;
+                        })
+                    )
+            )
+        );
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+            dispatcher.register(
+                ClientCommandManager.literal("bridgeplayercolor")
+                    .then(ClientCommandManager.literal("reset")
+                        .executes(ctx -> {
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.discordNameColor = "3";
+                            cfg.save();
+                            BridgeConfig.reload();
+                            feedback(ctx.getSource().getClient(),
+                                "§aCouleur du pseudo reinitialisee: §3" + colorNameFromCode("3") + " §7(&3)");
+                            return 1;
+                        })
+                    )
+                    .then(ClientCommandManager.argument("couleur", StringArgumentType.greedyString())
+                        .executes(ctx -> {
+                            String input = StringArgumentType.getString(ctx, "couleur");
+                            String code = resolveColorCode(input);
+                            if (code == null) {
+                                feedback(ctx.getSource().getClient(),
+                                    "§cCouleur inconnue: §f" + input +
+                                    " §7(valeurs: " + colorHelpList() + ")");
+                                return 0;
+                            }
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.discordNameColor = code;
+                            cfg.save();
+                            BridgeConfig.reload();
+                            String colorName = colorNameFromCode(code);
+                            feedback(ctx.getSource().getClient(),
+                                "§aCouleur du pseudo: §" + code + colorName + " §7(&" + code + ")");
+                            return 1;
+                        })
+                    )
+            )
+        );
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+            dispatcher.register(
+                ClientCommandManager.literal("bc")
+                    .then(ClientCommandManager.literal("reset")
+                        .executes(ctx -> {
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.botAliasColor = "b";
+                            cfg.save();
+                            BridgeConfig.reload();
+                            feedback(ctx.getSource().getClient(),
+                                "§aCouleur du bridge reinitialisee: §b" + colorNameFromCode("b") + " §7(&b)");
+                            return 1;
+                        })
+                    )
+                    .then(ClientCommandManager.argument("couleur", StringArgumentType.greedyString())
+                        .executes(ctx -> {
+                            String input = StringArgumentType.getString(ctx, "couleur");
+                            String code = resolveColorCode(input);
+                            if (code == null) {
+                                feedback(ctx.getSource().getClient(),
+                                    "§cCouleur inconnue: §f" + input +
+                                    " §7(valeurs: " + colorHelpList() + ")");
+                                return 0;
+                            }
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.botAliasColor = code;
+                            cfg.save();
+                            BridgeConfig.reload();
+                            String colorName = colorNameFromCode(code);
+                            feedback(ctx.getSource().getClient(),
+                                "§aCouleur du bridge: §" + code + colorName + " §7(&" + code + ")");
+                            return 1;
+                        })
+                    )
+            )
+        );
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+            dispatcher.register(
+                ClientCommandManager.literal("bpc")
+                    .then(ClientCommandManager.literal("reset")
+                        .executes(ctx -> {
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.discordNameColor = "3";
+                            cfg.save();
+                            BridgeConfig.reload();
+                            feedback(ctx.getSource().getClient(),
+                                "§aCouleur du pseudo reinitialisee: §3" + colorNameFromCode("3") + " §7(&3)");
+                            return 1;
+                        })
+                    )
+                    .then(ClientCommandManager.argument("couleur", StringArgumentType.greedyString())
+                        .executes(ctx -> {
+                            String input = StringArgumentType.getString(ctx, "couleur");
+                            String code = resolveColorCode(input);
+                            if (code == null) {
+                                feedback(ctx.getSource().getClient(),
+                                    "§cCouleur inconnue: §f" + input +
+                                    " §7(valeurs: " + colorHelpList() + ")");
+                                return 0;
+                            }
+                            BridgeConfig cfg = BridgeConfig.get();
+                            cfg.discordNameColor = code;
+                            cfg.save();
+                            BridgeConfig.reload();
+                            String colorName = colorNameFromCode(code);
+                            feedback(ctx.getSource().getClient(),
+                                "§aCouleur du pseudo: §" + code + colorName + " §7(&" + code + ")");
                             return 1;
                         })
                     )
@@ -132,8 +288,8 @@ public class GuildChatMod implements ClientModInitializer {
 
     private static String resolveColorCode(String input) {
         if (input == null || input.isEmpty()) return null;
-        String normalized = input.toLowerCase().replace('-', '_');
-        if (normalized.startsWith("§")) normalized = normalized.substring(1);
+        String normalized = input.toLowerCase().replace('-', '_').replace(' ', '_');
+        if (normalized.startsWith("§") || normalized.startsWith("&")) normalized = normalized.substring(1);
         if (normalized.length() == 1 && normalized.matches("[0-9a-f]")) return normalized;
         return switch (normalized) {
             case "black", "noir" -> "0";
@@ -156,26 +312,32 @@ public class GuildChatMod implements ClientModInitializer {
         };
     }
 
+    private static String colorHelpList() {
+        return "noir (&0), bleu fonce (&1), vert fonce (&2), cyan fonce (&3), rouge fonce (&4), " +
+            "violet fonce (&5), or (&6), gris (&7), gris fonce (&8), bleu (&9), vert (&a), " +
+            "cyan (&b), rouge (&c), rose clair (&d), jaune (&e), blanc (&f)";
+    }
+
     private static String colorNameFromCode(String code) {
         String safe = safeColorCode(code);
         return switch (safe) {
-            case "0" -> "black";
-            case "1" -> "dark_blue";
-            case "2" -> "dark_green";
-            case "3" -> "dark_aqua";
-            case "4" -> "dark_red";
-            case "5" -> "dark_purple";
-            case "6" -> "gold";
-            case "7" -> "gray";
-            case "8" -> "dark_gray";
-            case "9" -> "blue";
-            case "a" -> "green";
-            case "b" -> "aqua";
-            case "c" -> "red";
-            case "d" -> "light_purple";
-            case "e" -> "yellow";
-            case "f" -> "white";
-            default -> "aqua";
+            case "0" -> "noir";
+            case "1" -> "bleu fonce";
+            case "2" -> "vert fonce";
+            case "3" -> "cyan fonce";
+            case "4" -> "rouge fonce";
+            case "5" -> "violet fonce";
+            case "6" -> "or";
+            case "7" -> "gris";
+            case "8" -> "gris fonce";
+            case "9" -> "bleu";
+            case "a" -> "vert";
+            case "b" -> "cyan";
+            case "c" -> "rouge";
+            case "d" -> "rose clair";
+            case "e" -> "jaune";
+            case "f" -> "blanc";
+            default -> "cyan";
         };
     }
 }

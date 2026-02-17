@@ -35,15 +35,14 @@ public class ChatHudMixin {
     @Unique
     private static final Pattern COLOR_CODE = Pattern.compile("§[0-9a-fk-orA-FK-OR]");
 
-    // Pattern bridge :
+    // Pattern bridge (en-tete) :
     //   Groupe 1 = rang Hypixel du bot (optionnel)
     //   Groupe 2 = nom MC du bot
     //   Groupe 3 = rôle guild : GM ou OFFICER (optionnel)
-    //   Groupe 4 = pseudo Discord
-    //   Groupe 5 = message
+    //   Groupe 4 = reste du message (payload)
     @Unique
-    private static final Pattern BRIDGE_FULL = Pattern.compile(
-        "^Guild > (?:\\[([A-Z+]+)] )?([\\w]+)(?: \\[(GM|OFFICER)])?: (?:\\[[^]]+] )?(?:[A-Z] > )?([^:]+?): (.+)$"
+    private static final Pattern BRIDGE_HEADER = Pattern.compile(
+        "^Guild > (?:\\[([A-Z+]+)] )?([\\w]+)(?: \\[(GM|OFFICER)])?: (.+)$"
     );
 
     @ModifyVariable(
@@ -61,27 +60,54 @@ public class ChatHudMixin {
         if (!raw.startsWith("Guild > ")) return original;
 
         // 3. Test du pattern bridge
-        Matcher m = BRIDGE_FULL.matcher(raw);
+        Matcher m = BRIDGE_HEADER.matcher(raw);
         if (!m.matches()) return original; // message guild normal → on ne touche à rien
 
         // 4. Extraction des groupes
-        // String rang    = m.group(1); // ex: "MVP++"  — non utilisé dans l'affichage
-        String botMC   = m.group(2); // ex: "KetroX"
-        String discord = m.group(4); // ex: "MeteoFrance"
-        String message = m.group(5); // ex: "test"
+        String botMC = m.group(2); // ex: "KetroX"
+        String payload = m.group(4); // ex: "D > MeteoFrance: test"
 
         // 5. Vérification du bot : si botMCName est défini, on ne formate QUE ce bot
         BridgeConfig cfg = BridgeConfig.get();
         if (cfg.botMCName != null && !cfg.botMCName.equalsIgnoreCase(botMC)) {
             return original; // ce n'est pas notre bot → on ne touche à rien
         }
+        if (cfg.botMCName == null && !hasChannelMarker(payload)) {
+            return original; // pas de marqueur canal → évite de toucher aux messages guild normaux
+        }
 
-        // 6. Construction du message formaté
+        // 6. Nettoyage du payload pour supporter plusieurs formats (V1/V2/V3)
+        String cleaned = payload;
+        if (cleaned.startsWith("[")) {
+            int end = cleaned.indexOf("] ");
+            if (end > 0 && end + 2 <= cleaned.length()) {
+                cleaned = cleaned.substring(end + 2);
+            }
+        }
+        if (cleaned.matches("^[A-Z] > .+")) {
+            cleaned = cleaned.substring(4);
+        }
+
+        String discord;
+        String message;
+        int sepIndex = cleaned.indexOf(": ");
+        if (sepIndex >= 0) {
+            discord = cleaned.substring(0, sepIndex).trim();
+            message = cleaned.substring(sepIndex + 2).trim();
+        } else {
+            sepIndex = cleaned.indexOf(" > ");
+            if (sepIndex < 0) return original;
+            discord = cleaned.substring(0, sepIndex).trim();
+            message = cleaned.substring(sepIndex + 3).trim();
+        }
+        if (discord.isEmpty() || message.isEmpty()) return original;
+
+        // 7. Construction du message formaté
         //    Format : "G > Bridge > PseudoDiscord: message"
         String formatted = "§aG §8> "
             + "§" + safeColorCode(cfg.botAliasColor) + cfg.botAlias
             + " §8> "
-            + "§f" + discord
+            + "§" + safeColorCode(cfg.discordNameColor) + discord
             + "§8: §f" + message;
 
         return Text.literal(formatted);
@@ -91,5 +117,18 @@ public class ChatHudMixin {
     private static String safeColorCode(String code) {
         if (code == null || code.isEmpty()) return "b";
         return code.substring(0, 1).toLowerCase();
+    }
+
+    @Unique
+    private static boolean hasChannelMarker(String payload) {
+        if (payload == null || payload.isEmpty()) return false;
+        String cleaned = payload;
+        if (cleaned.startsWith("[")) {
+            int end = cleaned.indexOf("] ");
+            if (end > 0 && end + 2 <= cleaned.length()) {
+                cleaned = cleaned.substring(end + 2);
+            }
+        }
+        return cleaned.matches("^[A-Z0-9]{1,2} > .+");
     }
 }

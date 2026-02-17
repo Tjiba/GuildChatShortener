@@ -25,6 +25,9 @@ public class BridgeConfig {
     // Couleur du nom du bridge (code Minecraft sans §, ex: "b" pour aqua)
     public String botAliasColor = "b";
 
+    // Couleur du pseudo Discord (code Minecraft sans §, ex: "3" pour dark_aqua)
+    public String discordNameColor = "3";
+
     // ── Singleton ─────────────────────────────────────────────────────────────
     public static BridgeConfig get() {
         if (instance == null) instance = load();
