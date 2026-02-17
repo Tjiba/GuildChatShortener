@@ -4,29 +4,29 @@
 
 ### Test Language Switching
 
-1. **Start in French (default)**
-   ```
-   /bridge help
-   ```
-   Expected: Messages in French
-   
-2. **Switch to English**
-   ```
-   /bridgelanguage English
-   ```
-   Expected: "§aLanguage set to: §eEnglish"
-   
-3. **Test English messages**
+1. **Start in English (default)**
    ```
    /bridge help
    ```
    Expected: Messages in English
    
-4. **Switch back to French**
+2. **Switch to French**
    ```
-   /bridgelanguage fr
+   /bridgelanguage Français
    ```
    Expected: "§aLangue définie sur: §eFrançais"
+   
+3. **Test French messages**
+   ```
+   /bridge help
+   ```
+   Expected: Messages in French
+   
+4. **Switch back to English**
+   ```
+   /bridgelanguage en
+   ```
+   Expected: "§aLanguage set to: §eEnglish"
 
 ---
 
@@ -178,9 +178,9 @@ French Mode:
 
 ## Test Configuration Persistence
 
-1. Set language to English
+1. Set language to French
    ```
-   /bridgelanguage English
+   /bridgelanguage Français
    ```
 
 2. Exit Minecraft
@@ -189,7 +189,7 @@ French Mode:
    ```json
    {
      ...
-     "language": "english"
+     "language": "french"
    }
    ```
 
@@ -199,7 +199,7 @@ French Mode:
    ```
    /bridge help
    ```
-   Expected: Messages still in English
+   Expected: Messages still in French
 
 ---
 
@@ -263,7 +263,7 @@ All these should work:
 
 When starting the mod:
 
-**English Mode:**
+**English Mode (default):**
 ```
 [INFO] Guild Chat Formatter loaded!
 ```

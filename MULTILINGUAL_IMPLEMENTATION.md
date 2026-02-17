@@ -5,7 +5,7 @@
 ### 📁 New Files Created / Nouveaux fichiers créés
 
 1. **`Language.java`** - Enum for language management
-   - Supports `ENGLISH` and `FRENCH`
+   - Supports `ENGLISH` (default) and `FRENCH`
    - Auto-detection from user input (en, english, fr, français, etc.)
    
 2. **`Messages.java`** - Complete translation system
@@ -159,6 +159,8 @@
   "language": "english"
 }
 ```
+
+*Note: English is now the default language.*
 
 ---
 

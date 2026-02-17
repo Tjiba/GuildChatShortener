@@ -203,7 +203,7 @@ public class Messages {
         Map<Language, String> langMap = messages.get(key);
         if (langMap == null) return key;
         String msg = langMap.get(language);
-        return msg != null ? msg : langMap.get(Language.FRENCH); // Fallback to French
+        return msg != null ? msg : langMap.get(Language.ENGLISH); // Fallback to English
     }
     
     public static String format(String key, Object... args) {

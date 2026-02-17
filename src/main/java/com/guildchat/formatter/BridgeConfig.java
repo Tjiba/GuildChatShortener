@@ -32,12 +32,12 @@ public class BridgeConfig {
     public boolean formatAllGuild = false;
 
     // Langue de l'interface (english ou french)
-    public String language = "french";
+    public String language = "english";
 
     // ── Getters ───────────────────────────────────────────────────────────────
     public Language getLanguage() {
         Language lang = Language.fromString(language);
-        return lang != null ? lang : Language.FRENCH;
+        return lang != null ? lang : Language.ENGLISH;
     }
 
     // ── Singleton ─────────────────────────────────────────────────────────────

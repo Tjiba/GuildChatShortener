@@ -21,7 +21,7 @@ public enum Language {
     }
 
     public static Language fromString(String input) {
-        if (input == null) return FRENCH; // Default
+        if (input == null) return ENGLISH; // Default
         String normalized = input.toLowerCase().trim();
         
         for (Language lang : values()) {

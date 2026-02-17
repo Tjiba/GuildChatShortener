@@ -172,7 +172,7 @@ build/libs/GuildChatShortener-1.1.0.jar
   "botAliasColor": "b",
   "discordNameColor": "3",
   "formatAllGuild": false,
-  "language": "french"
+  "language": "english"
 }
 ```
 

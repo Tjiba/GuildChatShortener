@@ -1,7 +1,10 @@
-<h1 align="center">🎮 GuildChat Shortener</h1>
+<h1 align="center">🎮 GuildChat Shortener 🇫🇷</h1>
 
 <p align="center">
   <b>Mod Fabric pour raccourcir et personnaliser les messages du bridge Discord dans les guildes Hypixel</b>
+</p>
+<p align="center">
+  🇫🇷 Fièrement créé en France 🇫🇷
 </p>
 
 <p align="center">
@@ -117,8 +120,8 @@ Changez la langue du mod (tous les messages et commandes) :
 ```
 
 **Langues disponibles** :
-- `English` ou `en` - Interface anglaise
-- `Français` ou `fr` - Interface française (par défaut)
+- `English` ou `en` - Interface anglaise (par défaut)
+- `Français` ou `fr` - Interface française
 
 **Exemples** :
 ```

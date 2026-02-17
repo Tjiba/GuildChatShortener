@@ -71,21 +71,21 @@ gradlew.bat build
 
 ## 🎨 EXEMPLE D'UTILISATION
 
-### Mode Français (par défaut)
+### Mode Anglais (par défaut)
 ```
 /bridge help
-§e/bridgesetup <nomMC> <alias> §7- définir le bot et l'alias
-§e/bridge status §7- afficher la config
+§e/bridgesetup <mcName> <alias> §7- define bot and alias
+§e/bridge status §7- show configuration
 ...
 
-/bc jaune
-§aCouleur du bridge: §ejaune §7(&e)
+/bc yellow
+§aBridge color: §eyellow §7(&e)
 ```
 
-### Mode Anglais
+### Mode Français
 ```
-/bridgelanguage English
-§aLanguage set to: §eEnglish
+/bridgelanguage Français
+§aLangue définie sur: §eFrançais
 
 /bridge help
 §e/bridgesetup <mcName> <alias> §7- define bot and alias
