@@ -1,19 +1,17 @@
-<div align="center">
-
-# 🎮 GuildChat Shortener
-
-### Fabric mod to shorten and customize Discord bridge messages in Hypixel guilds
-
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21-brightgreen.svg)](https://www.minecraft.net/)
-[![Fabric](https://img.shields.io/badge/Fabric-0.18.4-orange.svg)](https://fabricmc.net/)
-[![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-**English** | [Français](README.fr.md)
-
----
-
-</div>
+<p align="center">
+  <h1 align="center">🎮 GuildChat Shortener</h1>
+  <h3 align="center">Fabric mod to shorten and customize Discord bridge messages in Hypixel guilds</h3>
+  <p align="center">
+    <a href="https://www.minecraft.net/"><img src="https://img.shields.io/badge/Minecraft-1.21-brightgreen.svg" alt="Minecraft"></a>
+    <a href="https://fabricmc.net/"><img src="https://img.shields.io/badge/Fabric-0.18.4-orange.svg" alt="Fabric"></a>
+    <a href="https://www.oracle.com/java/"><img src="https://img.shields.io/badge/Java-21-blue.svg" alt="Java"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"></a>
+  </p>
+  <p align="center">
+    <strong>English</strong> | <a href="README.fr.md">Français</a>
+  </p>
+  <hr>
+</p>
 
 ## 📖 Description
 
@@ -40,7 +38,7 @@
    - Java **21** or higher
 
 2. **Installation**:
-   - Download the `.jar` file from [Releases](../../releases)
+   - Download the `.jar` file from the [Releases](https://github.com/Tjiba/GuildChatShortener/releases) page
    - Place the file in your `mods/` folder
    - Launch Minecraft with the Fabric profile
 
@@ -175,7 +173,7 @@ Contributions are welcome! Feel free to:
 
 ## 📜 License
 
-This project is licensed under the **MIT** License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT** License. See the [LICENSE](./LICENSE) file for details.
 
 ---
 
@@ -185,10 +183,11 @@ Developed with ❤️ by **[Tjiba](https://github.com/Tjiba)** (MeteoFrance in-g
 
 ---
 
-<div align="center">
-
-### ⭐ If this mod is useful to you, feel free to give it a star!
-
-[Download](../../releases) • [Report a Bug](../../issues) • [Request a Feature](../../issues)
-
-</div>
+<p align="center">
+  <h3 align="center">⭐ If this mod is useful to you, feel free to give it a star!</h3>
+  <p align="center">
+    <a href="https://github.com/Tjiba/GuildChatShortener/releases">Download</a> • 
+    <a href="https://github.com/Tjiba/GuildChatShortener/issues">Report a Bug</a> • 
+    <a href="https://github.com/Tjiba/GuildChatShortener/issues">Request a Feature</a>
+  </p>
+</p>
