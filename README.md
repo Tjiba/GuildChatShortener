@@ -33,6 +33,8 @@
 - 🔄 **Smart Detection** - Automatically recognizes Discord bridge messages
 - 💾 **Automatic Saving** - Your configuration persists between sessions
 - 🌐 **Global Mode** - Enable formatting for all guild messages
+- 🆕 **Update Checker** - Automatic version detection and manual update check with `/bridge update`
+- 🎲 **Random Colors** - Optional random color assignment for Discord player names
 
 ---
 
@@ -60,10 +62,12 @@
 
 ```
 /bridge help              # Show help
+/bridge update            # Check for mod updates
 /bridgename <alias>       # Change alias (ex: /bridgename DC)
 /bridgecolor <color>      # Change alias color (ex: /bridgecolor red)
 /bridgeplayercolor <color> # Change player name color
 /bridgelanguage <lang>    # Change language (english/french)
+/bridge random            # Toggle random colors for Discord names
 ```
 
 **Examples**:
@@ -71,6 +75,8 @@
 /bridgename Bridge        # Set alias to "Bridge"
 /bridgecolor yellow       # Make alias yellow
 /bridgelanguage french    # Switch to French
+/bridge update            # Check for updates manually
+/bridge random on         # Enable random colors
 ```
 
 ---

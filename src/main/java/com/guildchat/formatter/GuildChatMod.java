@@ -78,9 +78,19 @@ public class GuildChatMod implements ClientModInitializer {
                             feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_ACTIVATEALL));
                             feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_RANDOM));
                             feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_LANGUAGE));
+                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_UPDATE));
                             return 1;
                         })
                     )
+                    
+                    // /bridge update → vérifier les mises à jour
+                    .then(ClientCommandManager.literal("update")
+                        .executes(ctx -> {
+                            UpdateNotifier.checkUpdateManually(ctx.getSource().getClient());
+                            return 1;
+                        })
+                    )
+                    
                     // /bridge random → toggle couleurs aléatoires
                     .then(ClientCommandManager.literal("random")
                         .executes(ctx -> {

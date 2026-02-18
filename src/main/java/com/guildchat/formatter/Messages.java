@@ -34,6 +34,10 @@ public class Messages {
     // Update messages
     public static final String UPDATE_AVAILABLE = "update.available";
     public static final String UPDATE_MODRINTH = "update.modrinth";
+    public static final String UPDATE_CHECKING = "update.checking";
+    public static final String UPDATE_UP_TO_DATE = "update.up_to_date";
+    public static final String UPDATE_CHECK_FAILED = "update.check_failed";
+    public static final String UPDATE_DEV_VERSION = "update.dev_version";
     
     // Help messages
     public static final String HELP_BRIDGESETUP = "help.bridgesetup";
@@ -45,6 +49,7 @@ public class Messages {
     public static final String HELP_ACTIVATEALL = "help.activateall";
     public static final String HELP_RANDOM = "help.random";
     public static final String HELP_LANGUAGE = "help.language";
+    public static final String HELP_UPDATE = "help.update";
     
     // Color names
     public static final String COLOR_BLACK = "color.name.black";
@@ -164,6 +169,9 @@ public class Messages {
         add(HELP_LANGUAGE, Language.ENGLISH, "§e/bridgelanguage <language> §7- change language (English/Français)");
         add(HELP_LANGUAGE, Language.FRENCH, "§e/bridgelanguage <langue> §7- changer la langue (English/Français)");
         
+        add(HELP_UPDATE, Language.ENGLISH, "§e/bridge update §7- check for updates");
+        add(HELP_UPDATE, Language.FRENCH, "§e/bridge update §7- vérifier les mises à jour");
+        
         // Color names
         add(COLOR_BLACK, Language.ENGLISH, "black");
         add(COLOR_BLACK, Language.FRENCH, "noir");
@@ -214,11 +222,23 @@ public class Messages {
         add(COLOR_WHITE, Language.FRENCH, "blanc");
         
         // Update messages
-        add(UPDATE_AVAILABLE, Language.ENGLISH, "§c§lGuild Chat Shortener update available! §7v1.2.0 is now available. §6Download it on §lModrinth§6.");
-        add(UPDATE_AVAILABLE, Language.FRENCH, "§c§lMise à jour disponible pour Guild Chat Shortener ! §7v1.2.0 est maintenant disponible. §6Télécharger sur §lModrinth§6.");
+        add(UPDATE_AVAILABLE, Language.ENGLISH, "§c§lGuild Chat Shortener update available! §7v%s is now available (current: v%s). §6Download it on §lModrinth§6.");
+        add(UPDATE_AVAILABLE, Language.FRENCH, "§c§lMise à jour disponible pour Guild Chat Shortener ! §7v%s est maintenant disponible (actuelle: v%s). §6Télécharger sur §lModrinth§6.");
         
         add(UPDATE_MODRINTH, Language.ENGLISH, "§6Link: §bhttps://modrinth.com/mod/guildchat-shortener");
         add(UPDATE_MODRINTH, Language.FRENCH, "§6Lien: §bhttps://modrinth.com/mod/guildchat-shortener");
+        
+        add(UPDATE_CHECKING, Language.ENGLISH, "§eChecking for updates...");
+        add(UPDATE_CHECKING, Language.FRENCH, "§eVérification des mises à jour...");
+        
+        add(UPDATE_UP_TO_DATE, Language.ENGLISH, "§aYou are using the latest version! §7(v%s)");
+        add(UPDATE_UP_TO_DATE, Language.FRENCH, "§aVous utilisez la dernière version ! §7(v%s)");
+        
+        add(UPDATE_CHECK_FAILED, Language.ENGLISH, "§cFailed to check for updates. Please check your internet connection.");
+        add(UPDATE_CHECK_FAILED, Language.FRENCH, "§cImpossible de vérifier les mises à jour. Vérifiez votre connexion internet.");
+        
+        add(UPDATE_DEV_VERSION, Language.ENGLISH, "§aYou are using a development version! §7(current: v%s, latest stable: v%s)");
+        add(UPDATE_DEV_VERSION, Language.FRENCH, "§aVous utilisez une version de développement ! §7(actuelle: v%s, dernière stable: v%s)");
     }
     
     private static void add(String key, Language language, String message) {

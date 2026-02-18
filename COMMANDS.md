@@ -159,6 +159,41 @@
 
 ---
 
+## 🎲 Random Colors / Couleurs aléatoires
+
+### Enable Random Colors / Activer les couleurs aléatoires
+```
+/bridge random
+/bridge random on
+```
+**English**: Enable random colors for Discord player names
+**Français**: Activer les couleurs aléatoires pour les pseudos Discord
+
+---
+
+### Disable Random Colors / Désactiver les couleurs aléatoires
+```
+/bridge random off
+```
+**English**: Disable random colors and use configured color
+**Français**: Désactiver les couleurs aléatoires et utiliser la couleur configurée
+
+---
+
+## 🔄 Update Check / Vérification de mise à jour
+
+### Check for Updates / Vérifier les mises à jour
+```
+/bridge update
+```
+**English**: Manually check for mod updates from GitHub
+**Français**: Vérifier manuellement les mises à jour du mod depuis GitHub
+
+**Automatic check**: The mod automatically checks for updates when you join a server for the first time.
+**Vérification automatique**: Le mod vérifie automatiquement les mises à jour lors de votre première connexion à un serveur.
+
+---
+
 ## 🎨 Available Colors / Couleurs disponibles
 
 ### Color Names / Noms de couleurs

@@ -13,28 +13,47 @@ import java.util.concurrent.CompletableFuture;
 
 public class VersionManager {
     
-    public static final String CURRENT_VERSION = "1.2.1";
+    public static final String CURRENT_VERSION = "1.2.3";
     private static final String GITHUB_API_URL = "https://api.github.com/repos/Tjiba/GuildChatShortener/releases/latest";
     
     private static String latestVersionOnline = null;
     private static boolean checkingVersion = false;
+    private static boolean hasChecked = false;
     
     /**
      * Vérifie la version en ligne de manière asynchrone
      */
     public static void checkVersionUpdateAsync() {
-        if (checkingVersion) return;
+        checkVersionUpdateAsync(false);
+    }
+    
+    /**
+     * Vérifie la version en ligne de manière asynchrone
+     * @param force Force la vérification même si déjà en cours
+     */
+    public static void checkVersionUpdateAsync(boolean force) {
+        if (checkingVersion && !force) return;
         
         CompletableFuture.runAsync(() -> {
             checkingVersion = true;
             try {
                 String latestVersion = fetchLatestVersionFromGitHub();
-                if (latestVersion != null && isOlderVersion(latestVersion)) {
+                if (latestVersion != null) {
+                    hasChecked = true;
                     latestVersionOnline = latestVersion;
-                    showUpdateMessage(latestVersion);
+                    
+                    int comparison = compareVersions(CURRENT_VERSION, latestVersion);
+                    if (comparison < 0) {
+                        // Current version is older, update available
+                        showUpdateMessage(latestVersion);
+                    } else if (comparison > 0) {
+                        // Current version is newer (dev version)
+                        showDevVersionMessage(latestVersion);
+                    }
+                    // Silencieux si les versions sont égales (à jour)
                 }
             } catch (Exception e) {
-                GuildChatMod.LOGGER.debug("Impossible de vérifier la version en ligne: " + e.getMessage());
+                GuildChatMod.LOGGER.debug("Unable to check online version: " + e.getMessage());
             } finally {
                 checkingVersion = false;
             }
@@ -81,6 +100,15 @@ public class VersionManager {
     }
     
     /**
+     * Affiche le message de version de développement
+     */
+    private static void showDevVersionMessage(String releaseVersion) {
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            GuildChatMod.LOGGER.info("Guild Chat Shortener: Dev version " + CURRENT_VERSION + " > " + releaseVersion + " (release)");
+        }
+    }
+    
+    /**
      * Retourne la dernière version disponible en ligne
      */
     public static String getLatestVersionOnline() {
@@ -88,25 +116,49 @@ public class VersionManager {
     }
     
     /**
-     * Compare si la version en ligne est plus récente que la version actuelle
-     * Retourne true si version en ligne > version actuelle
+     * Retourne si une vérification est en cours
      */
-    private static boolean isOlderVersion(String onlineVersion) {
+    public static boolean isCheckingVersion() {
+        return checkingVersion;
+    }
+    
+    /**
+     * Retourne si une vérification a déjà été effectuée
+     */
+    public static boolean hasCheckedVersion() {
+        return hasChecked;
+    }
+    
+    /**
+     * Réinitialise le cache de version (utile pour forcer une nouvelle vérification)
+     */
+    public static void resetVersionCache() {
+        latestVersionOnline = null;
+        hasChecked = false;
+    }
+    
+    /**
+     * Compare deux versions sémantiques
+     * @param version1 Première version (ex: "1.2.2")
+     * @param version2 Deuxième version (ex: "1.2.1")
+     * @return -1 si version1 < version2, 0 si égales, +1 si version1 > version2
+     */
+    public static int compareVersions(String version1, String version2) {
         try {
-            String[] parts1 = CURRENT_VERSION.split("\\.");
-            String[] parts2 = onlineVersion.split("\\.");
+            String[] parts1 = version1.split("\\.");
+            String[] parts2 = version2.split("\\.");
             
             for (int i = 0; i < Math.max(parts1.length, parts2.length); i++) {
                 int num1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
                 int num2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
                 
-                if (num1 < num2) return true;
-                if (num1 > num2) return false;
+                if (num1 < num2) return -1;
+                if (num1 > num2) return 1;
             }
+            return 0; // Versions égales
         } catch (NumberFormatException e) {
             GuildChatMod.LOGGER.warn("Erreur lors de la comparaison des versions: " + e.getMessage());
+            return 0; // En cas d'erreur, on considère les versions égales
         }
-        
-        return false;
     }
 }

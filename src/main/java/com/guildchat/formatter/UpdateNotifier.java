@@ -25,30 +25,116 @@ public class UpdateNotifier {
     
     /**
      * Affiche le message de mise à jour après vérification en ligne
+     * Affiche un message pour update disponible OU version dev
      */
     private static void scheduleVersionCheckMessage(MinecraftClient client) {
-        // Attendre un peu pour que la vérification GitHub soit faite
         Thread delayedCheck = new Thread(() -> {
             try {
-                // Attendre 2 secondes pour que la requête HTTP se termine
-                Thread.sleep(2000);
+                // Attendre 3 secondes pour que la requête HTTP se termine
+                Thread.sleep(3000);
                 
-                // Vérifier si une nouvelle version est disponible en ligne
                 String latestVersion = VersionManager.getLatestVersionOnline();
-                if (latestVersion != null && !latestVersion.equals(VersionManager.CURRENT_VERSION)) {
-                    if (client.player != null) {
+                if (latestVersion != null && client.player != null) {
+                    int comparison = VersionManager.compareVersions(VersionManager.CURRENT_VERSION, latestVersion);
+                    
+                    if (comparison < 0) {
+                        // Mise à jour disponible
                         client.player.sendMessage(
-                            Text.literal(Messages.get(Messages.UPDATE_AVAILABLE)),
+                            Text.literal(Messages.format(Messages.UPDATE_AVAILABLE, 
+                                latestVersion, VersionManager.CURRENT_VERSION)),
                             false
                         );
                         client.player.sendMessage(
                             Text.literal(Messages.get(Messages.UPDATE_MODRINTH)),
                             false
                         );
+                    } else if (comparison > 0) {
+                        // Version dev
+                        client.player.sendMessage(
+                            Text.literal(Messages.format(Messages.UPDATE_DEV_VERSION, 
+                                VersionManager.CURRENT_VERSION, latestVersion)),
+                            false
+                        );
+                    }
+                    // Silencieux si versions égales (à jour)
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        delayedCheck.setDaemon(true);
+        delayedCheck.start();
+    }
+    
+    /**
+     * Vérifie manuellement les mises à jour (pour commande)
+     */
+    public static void checkUpdateManually(MinecraftClient client) {
+        if (client.player != null) {
+            client.player.sendMessage(
+                Text.literal(Messages.get(Messages.UPDATE_CHECKING)),
+                false
+            );
+        }
+        
+        // Réinitialiser le cache pour forcer une nouvelle vérification
+        VersionManager.resetVersionCache();
+        VersionManager.checkVersionUpdateAsync(true);
+        
+        Thread delayedCheck = new Thread(() -> {
+            try {
+                // Attendre que la vérification se termine
+                int attempts = 0;
+                while (VersionManager.isCheckingVersion() && attempts < 30) {
+                    Thread.sleep(100);
+                    attempts++;
+                }
+                
+                String latestVersion = VersionManager.getLatestVersionOnline();
+                if (latestVersion != null) {
+                    int comparison = VersionManager.compareVersions(VersionManager.CURRENT_VERSION, latestVersion);
+                    
+                    if (comparison < 0) {
+                        // Update available
+                        if (client.player != null) {
+                            client.player.sendMessage(
+                                Text.literal(Messages.format(Messages.UPDATE_AVAILABLE, 
+                                    latestVersion, VersionManager.CURRENT_VERSION)),
+                                false
+                            );
+                            client.player.sendMessage(
+                                Text.literal(Messages.get(Messages.UPDATE_MODRINTH)),
+                                false
+                            );
+                        }
+                    } else if (comparison > 0) {
+                        // Development version
+                        if (client.player != null) {
+                            client.player.sendMessage(
+                                Text.literal(Messages.format(Messages.UPDATE_DEV_VERSION, 
+                                    VersionManager.CURRENT_VERSION, latestVersion)),
+                                false
+                            );
+                        }
+                    } else {
+                        // Up to date
+                        if (client.player != null) {
+                            client.player.sendMessage(
+                                Text.literal(Messages.format(Messages.UPDATE_UP_TO_DATE, 
+                                    VersionManager.CURRENT_VERSION)),
+                                false
+                            );
+                        }
+                    }
+                } else {
+                    if (client.player != null) {
+                        client.player.sendMessage(
+                            Text.literal(Messages.get(Messages.UPDATE_CHECK_FAILED)),
+                            false
+                        );
                     }
                 }
             } catch (InterruptedException e) {
-                // Ignorer les interruptions
                 Thread.currentThread().interrupt();
             }
         });

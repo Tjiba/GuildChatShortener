@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.2 - 2026-02-18 (À venir)
+- ✨ **NEW**: `/bridge update` command to manually check for updates
+- 🔄 Improved version checking system with dynamic version display
+- 🐛 **FIX**: Version comparison now correctly identifies development versions
+- 📊 Better error handling for version checks (connection issues, timeouts)
+- 💬 Dynamic update messages showing current and latest versions
+- 🧹 Added version cache management (reset, check status)
+- 📚 New documentation: VERSION_CHECK.md, UPDATE_GUIDE.md
+- 🌍 Updated all help messages to include `/bridge update`
+- 🎯 Improved UPDATE_AVAILABLE message to show both versions
+- ⚡ Smarter waiting mechanism for manual version checks
+- 🔧 Enhanced VersionManager with new utility methods
+- ✨ Added support for development version detection
+
 ## 1.2.1 - 2026-02-18
 - 🐛 Removed unused imports and fields
 - 🐛 Fixed deprecated URL handling (Java 20+)

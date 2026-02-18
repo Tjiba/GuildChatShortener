@@ -33,6 +33,8 @@
 - 🔄 **Détection intelligente** - Reconnaît automatiquement les messages du bridge Discord
 - 💾 **Sauvegarde automatique** - Votre configuration est persistante entre les sessions
 - 🌐 **Mode global** - Activez le formatage pour tous les messages de guilde
+- 🆕 **Vérificateur de mises à jour** - Détection automatique de version et vérification manuelle avec `/bridge update`
+- 🎲 **Couleurs aléatoires** - Attribution aléatoire optionnelle de couleurs pour les pseudos Discord
 
 ---
 
@@ -60,10 +62,12 @@
 
 ```
 /bridge help              # Affiche l'aide
+/bridge update            # Vérifie les mises à jour du mod
 /bridgename <alias>       # Change l'alias (ex: /bridgename DC)
 /bridgecolor <couleur>    # Change la couleur de l'alias (ex: /bridgecolor rouge)
 /bridgeplayercolor <color> # Change la couleur du pseudo joueur
 /bridgelanguage <lang>    # Change la langue (english/french)
+/bridge random            # Active/désactive les couleurs aléatoires
 ```
 
 **Exemples** :
@@ -71,6 +75,8 @@
 /bridgename Bridge        # Met l'alias à "Bridge"
 /bridgecolor jaune        # Rend l'alias jaune
 /bridgelanguage french    # Passer au français
+/bridge update            # Vérifier manuellement les mises à jour
+/bridge random on         # Activer les couleurs aléatoires
 ```
 
 ---
