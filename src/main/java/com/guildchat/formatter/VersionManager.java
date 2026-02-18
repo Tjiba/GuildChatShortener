@@ -37,9 +37,13 @@ public class VersionManager {
     static CompletableFuture<Void> checkVersionUpdateAsyncInternal() {
         return CompletableFuture.runAsync(() -> {
             try {
+                GuildChatMod.LOGGER.info("Checking for updates from GitHub...");
+                GuildChatMod.LOGGER.info("Current version: " + CURRENT_VERSION);
+                
                 String latestVersion = fetchLatestVersionFromGitHub();
                 if (latestVersion != null) {
                     latestVersionOnline = latestVersion;
+                    GuildChatMod.LOGGER.info("Latest version on GitHub: " + latestVersion);
                     
                     int comparison = compareVersions(CURRENT_VERSION, latestVersion);
                     if (comparison < 0) {
@@ -48,11 +52,15 @@ public class VersionManager {
                     } else if (comparison > 0) {
                         // Current version is newer (dev version)
                         showDevVersionMessage(latestVersion);
+                    } else {
+                        GuildChatMod.LOGGER.info("Version is up to date!");
                     }
-                    // Silencieux si les versions sont égales (à jour)
+                } else {
+                    GuildChatMod.LOGGER.warn("Failed to fetch latest version from GitHub (returned null)");
                 }
             } catch (Exception e) {
-                GuildChatMod.LOGGER.debug("Unable to check online version: " + e.getMessage());
+                GuildChatMod.LOGGER.error("Error checking version: " + e.getClass().getName() + " - " + e.getMessage());
+                e.printStackTrace();
             }
         });
     }
@@ -61,6 +69,8 @@ public class VersionManager {
      * Récupère la dernière version depuis l'API GitHub
      */
     private static String fetchLatestVersionFromGitHub() throws Exception {
+        GuildChatMod.LOGGER.info("Fetching from: " + GITHUB_API_URL);
+        
         var url = new URI(GITHUB_API_URL).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -68,7 +78,10 @@ public class VersionManager {
         connection.setReadTimeout(5000);
         connection.setRequestProperty("User-Agent", "GuildChatShortener-Mod");
         
-        if (connection.getResponseCode() == 200) {
+        int responseCode = connection.getResponseCode();
+        GuildChatMod.LOGGER.info("GitHub API response code: " + responseCode);
+        
+        if (responseCode == 200) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 StringBuilder response = new StringBuilder();
                 String line;
@@ -76,13 +89,27 @@ public class VersionManager {
                     response.append(line);
                 }
                 
-                JsonObject json = JsonParser.parseString(response.toString()).getAsJsonObject();
+                String jsonResponse = response.toString();
+                GuildChatMod.LOGGER.info("Response length: " + jsonResponse.length() + " chars");
+                
+                JsonObject json = JsonParser.parseString(jsonResponse).getAsJsonObject();
+                
+                if (!json.has("tag_name")) {
+                    GuildChatMod.LOGGER.error("No 'tag_name' field in GitHub response");
+                    return null;
+                }
+                
                 String tagName = json.get("tag_name").getAsString();
+                GuildChatMod.LOGGER.info("Found tag: " + tagName);
                 
                 // Nettoyer le tag (enlever le "v" s'il existe)
-                return tagName.startsWith("v") ? tagName.substring(1) : tagName;
+                String cleanVersion = tagName.startsWith("v") ? tagName.substring(1) : tagName;
+                return cleanVersion;
             }
+        } else {
+            GuildChatMod.LOGGER.warn("GitHub API returned non-200 code: " + responseCode);
         }
+        
         connection.disconnect();
         return null;
     }
