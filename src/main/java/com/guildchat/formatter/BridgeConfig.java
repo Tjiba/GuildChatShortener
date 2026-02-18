@@ -29,7 +29,7 @@ public class BridgeConfig {
     public String discordNameColor = "3";
 
     // Active le formatage pour tous les messages de guilde (pas seulement le bridge)
-    public boolean formatAllGuild = false;
+    public boolean formatAllGuild = true;
 
     // Active le mode couleurs aléatoires pour chaque message
     public boolean randomMode = false;
