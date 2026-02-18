@@ -79,66 +79,53 @@ public class UpdateNotifier {
         
         // Réinitialiser le cache pour forcer une nouvelle vérification
         VersionManager.resetVersionCache();
-        VersionManager.checkVersionUpdateAsync(true);
         
-        Thread delayedCheck = new Thread(() -> {
-            try {
-                // Attendre que la vérification se termine
-                int attempts = 0;
-                while (VersionManager.isCheckingVersion() && attempts < 30) {
-                    Thread.sleep(100);
-                    attempts++;
-                }
+        // Utiliser CompletableFuture pour éviter le busy-waiting
+        VersionManager.checkVersionUpdateAsync(true).thenRun(() -> {
+            String latestVersion = VersionManager.getLatestVersionOnline();
+            if (latestVersion != null) {
+                int comparison = VersionManager.compareVersions(VersionManager.CURRENT_VERSION, latestVersion);
                 
-                String latestVersion = VersionManager.getLatestVersionOnline();
-                if (latestVersion != null) {
-                    int comparison = VersionManager.compareVersions(VersionManager.CURRENT_VERSION, latestVersion);
-                    
-                    if (comparison < 0) {
-                        // Update available
-                        if (client.player != null) {
-                            client.player.sendMessage(
-                                Text.literal(Messages.format(Messages.UPDATE_AVAILABLE, 
-                                    latestVersion, VersionManager.CURRENT_VERSION)),
-                                false
-                            );
-                            client.player.sendMessage(
-                                Text.literal(Messages.get(Messages.UPDATE_MODRINTH)),
-                                false
-                            );
-                        }
-                    } else if (comparison > 0) {
-                        // Development version
-                        if (client.player != null) {
-                            client.player.sendMessage(
-                                Text.literal(Messages.format(Messages.UPDATE_DEV_VERSION, 
-                                    VersionManager.CURRENT_VERSION, latestVersion)),
-                                false
-                            );
-                        }
-                    } else {
-                        // Up to date
-                        if (client.player != null) {
-                            client.player.sendMessage(
-                                Text.literal(Messages.format(Messages.UPDATE_UP_TO_DATE, 
-                                    VersionManager.CURRENT_VERSION)),
-                                false
-                            );
-                        }
-                    }
-                } else {
+                if (comparison < 0) {
+                    // Update available
                     if (client.player != null) {
                         client.player.sendMessage(
-                            Text.literal(Messages.get(Messages.UPDATE_CHECK_FAILED)),
+                            Text.literal(Messages.format(Messages.UPDATE_AVAILABLE, 
+                                latestVersion, VersionManager.CURRENT_VERSION)),
+                            false
+                        );
+                        client.player.sendMessage(
+                            Text.literal(Messages.get(Messages.UPDATE_MODRINTH)),
+                            false
+                        );
+                    }
+                } else if (comparison > 0) {
+                    // Development version
+                    if (client.player != null) {
+                        client.player.sendMessage(
+                            Text.literal(Messages.format(Messages.UPDATE_DEV_VERSION, 
+                                VersionManager.CURRENT_VERSION, latestVersion)),
+                            false
+                        );
+                    }
+                } else {
+                    // Up to date
+                    if (client.player != null) {
+                        client.player.sendMessage(
+                            Text.literal(Messages.format(Messages.UPDATE_UP_TO_DATE, 
+                                VersionManager.CURRENT_VERSION)),
                             false
                         );
                     }
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            } else {
+                if (client.player != null) {
+                    client.player.sendMessage(
+                        Text.literal(Messages.get(Messages.UPDATE_CHECK_FAILED)),
+                        false
+                    );
+                }
             }
         });
-        delayedCheck.setDaemon(true);
-        delayedCheck.start();
     }
 }
