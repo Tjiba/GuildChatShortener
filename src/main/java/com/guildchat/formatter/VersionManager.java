@@ -59,8 +59,7 @@ public class VersionManager {
                     GuildChatMod.LOGGER.warn("Failed to fetch latest version from GitHub (returned null)");
                 }
             } catch (Exception e) {
-                GuildChatMod.LOGGER.error("Error checking version: " + e.getClass().getName() + " - " + e.getMessage());
-                e.printStackTrace();
+                GuildChatMod.LOGGER.error("Error checking version", e);
             }
         });
     }
@@ -103,8 +102,7 @@ public class VersionManager {
                 GuildChatMod.LOGGER.info("Found tag: " + tagName);
                 
                 // Nettoyer le tag (enlever le "v" s'il existe)
-                String cleanVersion = tagName.startsWith("v") ? tagName.substring(1) : tagName;
-                return cleanVersion;
+                return tagName.startsWith("v") ? tagName.substring(1) : tagName;
             }
         } else {
             GuildChatMod.LOGGER.warn("GitHub API returned non-200 code: " + responseCode);
