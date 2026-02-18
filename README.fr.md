@@ -136,7 +136,7 @@ Développé avec ❤️ par **[Tjiba](https://github.com/Tjiba)** (MeteoFrance e
 
 ---
 
-<div align="center">
+<div style="text-align:center">
 
 ### ⭐ Si ce mod vous est utile, n'hésitez pas à lui donner une étoile !
 
