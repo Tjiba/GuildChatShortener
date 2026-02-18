@@ -21,7 +21,7 @@
 
 ## 📖 Description
 
-**GuildChat Shortener** is a Fabric client-side mod that transforms long Discord bridge messages in your Hypixel guild into short and elegant messages. No more cluttered chat - customize the bridge display with colors and aliases to your liking!
+**GuildChat Shortener** is a Fabric client-side mod that transforms long Discord bridge messages and regular guild messages in your Hypixel guild into short and elegant messages. No more cluttered chat - customize the display with colors and aliases to your liking!
 
 ### ✨ Key Features
 
@@ -38,120 +38,48 @@
 
 ## 📥 Installation
 
-1. **Prerequisites**:
-   - Minecraft **1.21** or higher
-   - [Fabric Loader](https://fabricmc.net/use/) **0.18.0** or higher
-   - [Fabric API](https://modrinth.com/mod/fabric-api)
-   - Java **21** or higher
+**Requirements**:
+- Minecraft 1.21+
+- Fabric Loader 0.18.0+
+- Fabric API (required)
+- ModMenu (optional - for graphical config)
+- Cloth Config (optional - for graphical config)
 
-2. **Installation**:
-   - Download the `.jar` file from the [Releases](https://github.com/Tjiba/GuildChatShortener/releases) page
-   - Place the file in your `mods/` folder
-   - Launch Minecraft with the Fabric profile
+**Setup**:
+1. Download from [Releases](https://github.com/Tjiba/GuildChatShortener/releases)
+2. Place in your `mods/` folder
+3. Launch Minecraft with Fabric profile
 
 ---
 
 ## 🎯 Usage
 
-### Automatic Startup
+**The mod automatically detects Discord bridge messages!** Configuration is optional but can be customized with commands or ModMenu.
 
-**The mod automatically detects bridge messages!** You don't need to configure anything - formatting activates automatically as soon as a Discord bridge message is detected in your guild.
-
-### Manual Configuration (Optional)
-
-If automatic detection doesn't work, you can manually configure the Discord bot name:
+### Essential Commands
 
 ```
-/bridgesetup <mcName> <alias>
+/bridge help              # Show help
+/bridgename <alias>       # Change alias (ex: /bridgename DC)
+/bridgecolor <color>      # Change alias color (ex: /bridgecolor red)
+/bridgeplayercolor <color> # Change player name color
+/bridgelanguage <lang>    # Change language (english/french)
 ```
-
-**Example**:
-```
-/bridgesetup DiscordBot DC
-```
-
-### Main Commands
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `/bridge status` | Display current configuration | - |
-| `/bridge reset` | Reset entire configuration | - |
-| `/bridge help` | Display quick help | - |
-
-### 🏷️ Alias Management
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `/bridgename <alias>` | Change bridge alias | `/bridgename Discord` |
-| `/bridgename reset` | Reset to default alias ("Bridge") | - |
-
-### 🎨 Color Customization
-
-| Command | Alias | Description |
-|---------|-------|-------------|
-| `/bridgecolor <color>` | `/bc <color>` | Change alias color |
-| `/bridgecolor reset` | `/bc reset` | Reset to default cyan |
-| `/bridgeplayercolor <color>` | `/bpc <color>` | Change player name color |
-| `/bridgeplayercolor reset` | `/bpc reset` | Reset to default dark cyan |
 
 **Examples**:
 ```
-/bc yellow         # Bridge alias in yellow
-/bpc green         # Player name in green
-/bridgecolor &e    # Alias in yellow (color code)
-```
-
-### 🌐 Global Mode
-
-Enable or disable formatting for **all** guild messages:
-
-```
-/bridgeactivateall       # Enable global mode
-/bridgeactivateall off   # Disable global mode
-```
-
-### 🌍 Language Settings
-
-Change the mod's language (all messages and commands):
-
-```
-/bridgelanguage <language>
-```
-
-**Available languages**:
-- `English` or `en` - English interface (default)
-- `Français` or `fr` - Interface française
-
-**Examples**:
-```
-/bridgelanguage English    # Switch to English
-/bridgelanguage fr         # Passer au français
+/bridgename Bridge        # Set alias to "Bridge"
+/bridgecolor yellow       # Make alias yellow
+/bridgelanguage french    # Switch to French
 ```
 
 ---
 
 ## 🎨 Available Colors
 
-The `<color>` parameter accepts French/English names or Minecraft codes (`&` or `§`):
+Use color names in commands: `black`, `dark_blue`, `dark_green`, `dark_aqua`, `dark_red`, `dark_purple`, `gold`, `gray`, `dark_gray`, `blue`, `green`, `aqua`, `red`, `light_purple`, `yellow`, `white`
 
-| Name | Code | Preview |
-|------|------|---------|
-| `noir` / `black` | `&0` | Black |
-| `bleu fonce` / `dark_blue` | `&1` | Dark Blue |
-| `vert fonce` / `dark_green` | `&2` | Dark Green |
-| `cyan fonce` / `dark_aqua` | `&3` | Dark Cyan ⭐ (default player) |
-| `rouge fonce` / `dark_red` | `&4` | Dark Red |
-| `violet fonce` / `dark_purple` | `&5` | Dark Purple |
-| `or` / `gold` | `&6` | Gold |
-| `gris` / `gray` | `&7` | Gray |
-| `gris fonce` / `dark_gray` | `&8` | Dark Gray |
-| `bleu` / `blue` | `&9` | Blue |
-| `vert` / `green` | `&a` | Green |
-| `cyan` / `aqua` | `&b` | Cyan ⭐ (default bridge) |
-| `rouge` / `red` | `&c` | Red |
-| `rose clair` / `light_purple` | `&d` | Light Purple |
-| `jaune` / `yellow` | `&e` | Yellow |
-| `blanc` / `white` | `&f` | White |
+**Examples**: `/bc red`, `/bpc green`, `/bridgecolor aqua`
 
 ---
 

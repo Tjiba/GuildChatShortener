@@ -21,7 +21,7 @@
 
 ## 📖 Description
 
-**GuildChat Shortener** est un mod client Fabric qui transforme les longs messages du bridge Discord dans votre guild Hypixel en messages courts et élégants. Fini les messages encombrants - personnalisez l'affichage du bridge avec des couleurs et des alias à votre goût !
+**GuildChat Shortener** est un mod client Fabric qui transforme les longs messages du bridge Discord et les messages normaux de guilde dans votre guild Hypixel en messages courts et élégants. Fini les messages encombrants - personnalisez l'affichage avec des couleurs et des alias à votre goût !
 
 ### ✨ Fonctionnalités principales
 
@@ -38,120 +38,48 @@
 
 ## 📥 Installation
 
-1. **Prérequis** :
-   - Minecraft **1.21** ou supérieur
-   - [Fabric Loader](https://fabricmc.net/use/) **0.18.0** ou supérieur
-   - [Fabric API](https://modrinth.com/mod/fabric-api)
-   - Java **21** ou supérieur
+**Prérequis** :
+- Minecraft 1.21+
+- Fabric Loader 0.18.0+
+- Fabric API (obligatoire)
+- ModMenu (optionnel - pour la config graphique)
+- Cloth Config (optionnel - pour la config graphique)
 
-2. **Installation** :
-   - Téléchargez le fichier `.jar` depuis la page [Releases](https://github.com/Tjiba/GuildChatShortener/releases)
-   - Placez le fichier dans votre dossier `mods/`
-   - Lancez Minecraft avec le profil Fabric
+**Installation** :
+1. Téléchargez depuis [Releases](https://github.com/Tjiba/GuildChatShortener/releases)
+2. Placez dans votre dossier `mods/`
+3. Lancez Minecraft avec le profil Fabric
 
 ---
 
 ## 🎯 Utilisation
 
-### Démarrage automatique
+**Le mod détecte automatiquement les messages du bridge !** La configuration est optionnelle mais peut être personnalisée avec des commandes ou ModMenu.
 
-**Le mod détecte automatiquement les messages du bridge !** Vous n'avez rien à configurer - le formatage s'active tout seul dès qu'un message du bridge Discord est détecté dans votre guild.
-
-### Configuration manuelle (optionnelle)
-
-Si la détection automatique ne fonctionne pas, vous pouvez configurer manuellement le nom du bot Discord :
+### Commandes essentielles
 
 ```
-/bridgesetup <nomMC> <alias>
+/bridge help              # Affiche l'aide
+/bridgename <alias>       # Change l'alias (ex: /bridgename DC)
+/bridgecolor <couleur>    # Change la couleur de l'alias (ex: /bridgecolor rouge)
+/bridgeplayercolor <color> # Change la couleur du pseudo joueur
+/bridgelanguage <lang>    # Change la langue (english/french)
 ```
-
-**Exemple** :
-```
-/bridgesetup BotDiscord DC
-```
-
-### Commandes principales
-
-| Commande | Description | Exemple |
-|----------|-------------|---------|
-| `/bridge status` | Affiche la configuration actuelle | - |
-| `/bridge reset` | Réinitialise toute la configuration | - |
-| `/bridge help` | Affiche l'aide rapide | - |
-
-### 🏷️ Gestion de l'alias
-
-| Commande | Description | Exemple |
-|----------|-------------|---------|
-| `/bridgename <alias>` | Change l'alias du bridge | `/bridgename Discord` |
-| `/bridgename reset` | Remet l'alias par défaut ("Bridge") | - |
-
-### 🎨 Personnalisation des couleurs
-
-| Commande | Alias | Description |
-|----------|-------|-------------|
-| `/bridgecolor <couleur>` | `/bc <couleur>` | Change la couleur de l'alias |
-| `/bridgecolor reset` | `/bc reset` | Remet la couleur cyan par défaut |
-| `/bridgeplayercolor <couleur>` | `/bpc <couleur>` | Change la couleur du pseudo joueur |
-| `/bridgeplayercolor reset` | `/bpc reset` | Remet la couleur cyan foncé par défaut |
 
 **Exemples** :
 ```
-/bc jaune          # Alias du bridge en jaune
-/bpc vert          # Pseudo joueur en vert
-/bridgecolor &e    # Alias en jaune (code couleur)
-```
-
-### 🌐 Mode global
-
-Active ou désactive le formatage pour **tous** les messages de la guilde :
-
-```
-/bridgeactivateall       # Active le mode global
-/bridgeactivateall off   # Désactive le mode global
-```
-
-### 🌍 Paramètres de langue
-
-Changez la langue du mod (tous les messages et commandes) :
-
-```
-/bridgelanguage <langue>
-```
-
-**Langues disponibles** :
-- `English` ou `en` - Interface anglaise (par défaut)
-- `Français` ou `fr` - Interface française
-
-**Exemples** :
-```
-/bridgelanguage English    # Switch to English
-/bridgelanguage fr         # Passer au français
+/bridgename Bridge        # Met l'alias à "Bridge"
+/bridgecolor jaune        # Rend l'alias jaune
+/bridgelanguage french    # Passer au français
 ```
 
 ---
 
 ## 🎨 Couleurs disponibles
 
-Le paramètre `<couleur>` accepte les noms en français/anglais ou les codes Minecraft (`&` ou `§`) :
+Utilisez les noms de couleurs dans les commandes : `noir`, `bleu fonce`, `vert fonce`, `cyan fonce`, `rouge fonce`, `violet fonce`, `or`, `gris`, `gris fonce`, `bleu`, `vert`, `cyan`, `rouge`, `rose clair`, `jaune`, `blanc`
 
-| Nom | Code | Aperçu |
-|-----|------|--------|
-| `noir` / `black` | `&0` | Noir |
-| `bleu fonce` / `dark_blue` | `&1` | Bleu foncé |
-| `vert fonce` / `dark_green` | `&2` | Vert foncé |
-| `cyan fonce` / `dark_aqua` | `&3` | Cyan foncé ⭐ (défaut joueur) |
-| `rouge fonce` / `dark_red` | `&4` | Rouge foncé |
-| `violet fonce` / `dark_purple` | `&5` | Violet foncé |
-| `or` / `gold` | `&6` | Or |
-| `gris` / `gray` | `&7` | Gris |
-| `gris fonce` / `dark_gray` | `&8` | Gris foncé |
-| `bleu` / `blue` | `&9` | Bleu |
-| `vert` / `green` | `&a` | Vert |
-| `cyan` / `aqua` | `&b` | Cyan ⭐ (défaut bridge) |
-| `rouge` / `red` | `&c` | Rouge |
-| `rose clair` / `light_purple` | `&d` | Rose clair |
-| `jaune` / `yellow` | `&e` | Jaune |
-| `blanc` / `white` | `&f` | Blanc |
+**Exemples** : `/bc rouge`, `/bpc vert`, `/bridgecolor cyan`
 
 ---
 
