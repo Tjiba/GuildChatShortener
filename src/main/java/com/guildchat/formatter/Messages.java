@@ -31,6 +31,10 @@ public class Messages {
     public static final String LANGUAGE_UNKNOWN = "language.unknown";
     public static final String LANGUAGE_AVAILABLE = "language.available";
     
+    // Update messages
+    public static final String UPDATE_AVAILABLE = "update.available";
+    public static final String UPDATE_MODRINTH = "update.modrinth";
+    
     // Help messages
     public static final String HELP_BRIDGESETUP = "help.bridgesetup";
     public static final String HELP_STATUS = "help.status";
@@ -208,6 +212,13 @@ public class Messages {
         
         add(COLOR_WHITE, Language.ENGLISH, "white");
         add(COLOR_WHITE, Language.FRENCH, "blanc");
+        
+        // Update messages
+        add(UPDATE_AVAILABLE, Language.ENGLISH, "§c§lGuild Chat Shortener update available! §7v1.2.0 is now available. §6Download it on §lModrinth§6.");
+        add(UPDATE_AVAILABLE, Language.FRENCH, "§c§lMise à jour disponible pour Guild Chat Shortener ! §7v1.2.0 est maintenant disponible. §6Télécharger sur §lModrinth§6.");
+        
+        add(UPDATE_MODRINTH, Language.ENGLISH, "§6Link: §bhttps://modrinth.com/mod/guildchat-shortener");
+        add(UPDATE_MODRINTH, Language.FRENCH, "§6Lien: §bhttps://modrinth.com/mod/guildchat-shortener");
     }
     
     private static void add(String key, Language language, String message) {

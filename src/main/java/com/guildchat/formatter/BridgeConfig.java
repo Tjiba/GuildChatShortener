@@ -37,10 +37,21 @@ public class BridgeConfig {
     // Langue de l'interface (english ou french)
     public String language = "english";
 
+    // Dernière version du mod vue par le joueur
+    public String lastSeenVersion = null;
+
     // ── Getters ───────────────────────────────────────────────────────────────
     public Language getLanguage() {
         Language lang = Language.fromString(language);
         return lang != null ? lang : Language.ENGLISH;
+    }
+
+    public String getLastSeenVersion() {
+        return lastSeenVersion;
+    }
+
+    public void setLastSeenVersion(String version) {
+        this.lastSeenVersion = version;
     }
 
     // ── Singleton ─────────────────────────────────────────────────────────────

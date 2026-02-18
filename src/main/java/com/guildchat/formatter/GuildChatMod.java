@@ -17,6 +17,9 @@ public class GuildChatMod implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info(Messages.get(Messages.MOD_LOADED));
         BridgeConfig.get(); // initialise la config
+        
+        // Initialiser le notificateur de mise à jour (vérifie en ligne sur GitHub)
+        UpdateNotifier.init();
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
             dispatcher.register(
