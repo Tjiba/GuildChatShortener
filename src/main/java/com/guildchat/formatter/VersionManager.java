@@ -17,8 +17,6 @@ public class VersionManager {
     private static final String GITHUB_API_URL = "https://api.github.com/repos/Tjiba/GuildChatShortener/releases/latest";
     
     private static String latestVersionOnline = null;
-    private static boolean checkingVersion = false;
-    private static boolean hasChecked = false;
     
     /**
      * Vérifie la version en ligne de manière asynchrone
@@ -33,16 +31,10 @@ public class VersionManager {
      * @return CompletableFuture qui se termine quand la vérification est complète
      */
     public static CompletableFuture<Void> checkVersionUpdateAsync(boolean force) {
-        if (checkingVersion && !force) {
-            return CompletableFuture.completedFuture(null);
-        }
-        
         return CompletableFuture.runAsync(() -> {
-            checkingVersion = true;
             try {
                 String latestVersion = fetchLatestVersionFromGitHub();
                 if (latestVersion != null) {
-                    hasChecked = true;
                     latestVersionOnline = latestVersion;
                     
                     int comparison = compareVersions(CURRENT_VERSION, latestVersion);
@@ -57,8 +49,6 @@ public class VersionManager {
                 }
             } catch (Exception e) {
                 GuildChatMod.LOGGER.debug("Unable to check online version: " + e.getMessage());
-            } finally {
-                checkingVersion = false;
             }
         });
     }
@@ -119,18 +109,10 @@ public class VersionManager {
     }
     
     /**
-     * Retourne si une vérification est en cours
-     */
-    public static boolean isCheckingVersion() {
-        return checkingVersion;
-    }
-    
-    /**
      * Réinitialise le cache de version (utile pour forcer une nouvelle vérification)
      */
     public static void resetVersionCache() {
         latestVersionOnline = null;
-        hasChecked = false;
     }
     
     /**
