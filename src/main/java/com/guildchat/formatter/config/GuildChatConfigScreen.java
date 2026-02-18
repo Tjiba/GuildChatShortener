@@ -53,27 +53,21 @@ public class GuildChatConfigScreen {
         general.addEntry(ENTRY_BUILDER
                 .startStrField(Text.literal("Bot MC Name"), BridgeConfig.get().botMCName != null ? BridgeConfig.get().botMCName : "")
                 .setDefaultValue("")
-                .setSaveConsumer(value -> {
-                    BridgeConfig.get().botMCName = value.isEmpty() ? null : value;
-                })
+                .setSaveConsumer(value -> BridgeConfig.get().botMCName = value.isEmpty() ? null : value)
                 .setTooltip(Text.literal("Minecraft name of the Discord bot (leave empty for auto-detection)"))
                 .build());
 
         general.addEntry(ENTRY_BUILDER
                 .startStrField(Text.literal("Bridge Alias"), BridgeConfig.get().botAlias)
                 .setDefaultValue("Bridge")
-                .setSaveConsumer(value -> {
-                    BridgeConfig.get().botAlias = value.isEmpty() ? "Bridge" : value;
-                })
+                .setSaveConsumer(value -> BridgeConfig.get().botAlias = value.isEmpty() ? "Bridge" : value)
                 .setTooltip(Text.literal("Name to display instead of the bot's Minecraft name"))
                 .build());
 
         general.addEntry(ENTRY_BUILDER
                 .startBooleanToggle(Text.literal("Format All Guild Messages"), BridgeConfig.get().formatAllGuild)
                 .setDefaultValue(false)
-                .setSaveConsumer(value -> {
-                    BridgeConfig.get().formatAllGuild = value;
-                })
+                .setSaveConsumer(value -> BridgeConfig.get().formatAllGuild = value)
                 .setTooltip(Text.literal("Enable formatting for all guild messages, not just Discord bridge"))
                 .build());
 
@@ -88,13 +82,11 @@ public class GuildChatConfigScreen {
                 .startStringDropdownMenu(
                         Text.literal("Bridge Alias Color"),
                         currentAliasColorName,
-                        name -> createColoredNameText(name)
+                        GuildChatConfigScreen::createColoredNameText
                 )
                 .setSelections(getColorNamesList())
                 .setDefaultValue("Aqua")
-                .setSaveConsumer(value -> {
-                    BridgeConfig.get().botAliasColor = getColorCodeByName(value);
-                })
+                .setSaveConsumer(value -> BridgeConfig.get().botAliasColor = getColorCodeByName(value))
                 .setTooltip(Text.literal("Color of the bridge alias"))
                 .build());
 
@@ -105,22 +97,18 @@ public class GuildChatConfigScreen {
                 .startStringDropdownMenu(
                         Text.literal("Discord Player Color"),
                         currentPlayerColorName,
-                        name -> createColoredNameText(name)
+                        GuildChatConfigScreen::createColoredNameText
                 )
                 .setSelections(getColorNamesList())
                 .setDefaultValue("Dark Cyan")
-                .setSaveConsumer(value -> {
-                    BridgeConfig.get().discordNameColor = getColorCodeByName(value);
-                })
+                .setSaveConsumer(value -> BridgeConfig.get().discordNameColor = getColorCodeByName(value))
                 .setTooltip(Text.literal("Color of the Discord player name"))
                 .build());
 
         colors.addEntry(ENTRY_BUILDER
                 .startBooleanToggle(Text.literal("Random Colors"), BridgeConfig.get().randomMode)
                 .setDefaultValue(false)
-                .setSaveConsumer(value -> {
-                    BridgeConfig.get().randomMode = value;
-                })
+                .setSaveConsumer(value -> BridgeConfig.get().randomMode = value)
                 .setTooltip(Text.literal("Use random colors for each message (overrides the colors above)"))
                 .build());
 
@@ -136,9 +124,7 @@ public class GuildChatConfigScreen {
                 )
                 .setSelections(Arrays.asList("english", "french"))
                 .setDefaultValue("english")
-                .setSaveConsumer(value -> {
-                    BridgeConfig.get().language = value;
-                })
+                .setSaveConsumer(value -> BridgeConfig.get().language = value)
                 .setTooltip(Text.literal("Interface language (english / french)"))
                 .build());
 
@@ -179,7 +165,7 @@ public class GuildChatConfigScreen {
      */
     private static Text createColoredNameText(String colorName) {
         int index = Arrays.asList(COLOR_NAMES).indexOf(colorName);
-        if (index >= 0 && index < COLOR_FORMATS.length) {
+        if (index >= 0) {
             return Text.literal(colorName).formatted(COLOR_FORMATS[index]);
         }
         return Text.literal(colorName);

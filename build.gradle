@@ -29,7 +29,7 @@ dependencies {
 
 processResources {
     inputs.property "version", project.version
-    duplicatesStrategy = 'exclude'
+    duplicatesStrategy = 'EXCLUDE'
     
     filesMatching("fabric.mod.json") { 
         expand "version": project.version 
