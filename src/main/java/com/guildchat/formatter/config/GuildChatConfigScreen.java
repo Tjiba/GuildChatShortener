@@ -45,10 +45,6 @@ public class GuildChatConfigScreen {
             return code;
         }
 
-        public Text toText() {
-            return Text.literal(displayName).formatted(formatting);
-        }
-
         @Override
         public String toString() {
             // Return minecraft color code + display name for colored display in enum selector
