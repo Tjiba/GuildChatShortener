@@ -14,31 +14,29 @@ public class GuildChatConfigScreen {
     private static final ConfigEntryBuilder ENTRY_BUILDER = ConfigEntryBuilder.create();
 
     private enum ChatColorOption {
-        BLACK("0", "Black", Formatting.BLACK),
-        DARK_BLUE("1", "Dark Blue", Formatting.DARK_BLUE),
-        DARK_GREEN("2", "Dark Green", Formatting.DARK_GREEN),
-        DARK_CYAN("3", "Dark Cyan", Formatting.DARK_AQUA),
-        DARK_RED("4", "Dark Red", Formatting.DARK_RED),
-        PURPLE("5", "Purple", Formatting.DARK_PURPLE),
-        ORANGE("6", "Orange", Formatting.GOLD),
-        LIGHT_GRAY("7", "Light Gray", Formatting.GRAY),
-        DARK_GRAY("8", "Dark Gray", Formatting.DARK_GRAY),
-        LIGHT_BLUE("9", "Light Blue", Formatting.BLUE),
-        LIGHT_GREEN("a", "Light Green", Formatting.GREEN),
-        AQUA("b", "Aqua", Formatting.AQUA),
-        RED("c", "Red", Formatting.RED),
-        MAGENTA("d", "Magenta", Formatting.LIGHT_PURPLE),
-        YELLOW("e", "Yellow", Formatting.YELLOW),
-        WHITE("f", "White", Formatting.WHITE);
+        BLACK("0", "Black"),
+        DARK_BLUE("1", "Dark Blue"),
+        DARK_GREEN("2", "Dark Green"),
+        DARK_CYAN("3", "Dark Cyan"),
+        DARK_RED("4", "Dark Red"),
+        PURPLE("5", "Purple"),
+        ORANGE("6", "Orange"),
+        LIGHT_GRAY("7", "Light Gray"),
+        DARK_GRAY("8", "Dark Gray"),
+        LIGHT_BLUE("9", "Light Blue"),
+        LIGHT_GREEN("a", "Light Green"),
+        AQUA("b", "Aqua"),
+        RED("c", "Red"),
+        MAGENTA("d", "Magenta"),
+        YELLOW("e", "Yellow"),
+        WHITE("f", "White");
 
         private final String code;
         private final String displayName;
-        private final Formatting formatting;
 
-        ChatColorOption(String code, String displayName, Formatting formatting) {
+        ChatColorOption(String code, String displayName) {
             this.code = code;
             this.displayName = displayName;
-            this.formatting = formatting;
         }
 
         public String getCode() {
