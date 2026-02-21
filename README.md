@@ -10,6 +10,7 @@
 [![Fabric](https://img.shields.io/badge/Fabric-0.18.4-orange.svg)](https://fabricmc.net/)
 [![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Config](https://img.shields.io/badge/Config-ModMenu%20%2B%20Cloth%20Config-blue.svg)](https://www.curseforge.com/minecraft/mc-mods/modmenu)
 
 **English** | [Français](README.fr.md)
 
@@ -56,7 +57,9 @@
 
 ## 🎯 Usage
 
-**The mod automatically detects Discord bridge messages!** Configuration is optional but can be customized with commands or ModMenu.
+**The mod automatically detects Discord bridge messages!** Configuration is optional but can be customized with commands or ModMenu. You can also change the settings from ModMenu (Cloth Config required for the config screen).
+
+> **⚙️ ModMenu Config**: Open `Mods` → `GuildChat Shortener` → `Config` (requires Cloth Config).
 
 ### Essential Commands
 

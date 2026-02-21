@@ -10,6 +10,7 @@
 [![Fabric](https://img.shields.io/badge/Fabric-0.18.4-orange.svg)](https://fabricmc.net/)
 [![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Config](https://img.shields.io/badge/Config-ModMenu%20%2B%20Cloth%20Config-blue.svg)](https://www.curseforge.com/minecraft/mc-mods/modmenu)
 
 [English](README.md) | **Français**
 
@@ -57,6 +58,10 @@
 ## 🎯 Utilisation
 
 **Le mod détecte automatiquement les messages du bridge !** La configuration est optionnelle mais peut être personnalisée avec des commandes ou ModMenu.
+
+**⚙️ Config ModMenu** : Ouvre `Mods` → `GuildChat Shortener` → `Config` (Cloth Config requis).
+
+Vous pouvez aussi modifier les réglages depuis ModMenu (Cloth Config est requis pour l'écran de configuration).
 
 ### Commandes essentielles
 
