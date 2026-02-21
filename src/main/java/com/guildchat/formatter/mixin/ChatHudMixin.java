@@ -34,17 +34,21 @@ public class ChatHudMixin {
 
     // Supprime tous les codes couleur Minecraft (§0-§9, §a-§f, §k-§r)
     @Unique
-    private static final Pattern COLOR_CODE = Pattern.compile("§[0-9a-fk-orA-FK-OR]");
+    private static final Pattern COLOR_CODE = Pattern.compile("[§&][0-9a-fk-orA-FK-OR]");
 
     // Pattern bridge (en-tete) :
-    //   Groupe 1 = rang Hypixel du bot (optionnel)
-    //   Groupe 2 = nom MC du bot
-    //   Groupe 3 = rôle guild : GM ou OFFICER (optionnel)
-    //   Groupe 4 = reste du message (payload)
+    //   Groupe 1 = canal (Guild ou Officer)
+    //   Groupe 2 = rang Hypixel du bot (optionnel)
+    //   Groupe 3 = nom MC du bot
+    //   Groupe 4 = rôle guild : GM ou OFFICER (optionnel)
+    //   Groupe 5 = reste du message (payload)
     @Unique
     private static final Pattern BRIDGE_HEADER = Pattern.compile(
-        "^Guild > (?:\\[([A-Z+]+)] )?([\\w]+)(?: \\[([A-Za-z0-9+_]+)])?: (.+)$"
+        "^(Guild|Officer) > (?:\\[([A-Z+]+)] )?([\\w]+)(?: \\[([A-Za-z0-9+_]+)])?: (.+)$"
     );
+
+    @Unique
+    private static final Pattern CHANNEL_MARKER = Pattern.compile("^([A-Z0-9]{1,2}) > .+");
 
     @Unique
     private static final String[] RANDOM_COLORS = {
@@ -61,27 +65,37 @@ public class ChatHudMixin {
 
         // 1. Texte brut sans codes couleur
         String raw = COLOR_CODE.matcher(original.getString()).replaceAll("");
+        raw = raw.replaceAll("\\s+", " ").trim();
 
-        // 2. Seulement les messages de guild
-        if (!raw.startsWith("Guild > ")) return original;
+        // 2. Seulement les messages de guild / officer
+        if (!raw.startsWith("Guild > ") && !raw.startsWith("Officer > ")) return original;
 
         // 3. Test du pattern bridge
         Matcher m = BRIDGE_HEADER.matcher(raw);
         if (!m.matches()) return original; // message guild normal → on ne touche à rien
 
         // 4. Extraction des groupes
-        String botMC = m.group(2); // ex: "KetroX"
-        String payload = m.group(4); // ex: "D > MeteoFrance: test"
+        String headerChannel = m.group(1); // Guild ou Officer
+        String botMC = m.group(3); // ex: "KetroX"
+        String payload = m.group(5); // ex: "D > MeteoFrance: test"
 
         // 5. Vérification du bot : si botMCName est défini, on ne formate QUE ce bot
         BridgeConfig cfg = BridgeConfig.get();
         if (cfg.botMCName != null && !cfg.botMCName.equalsIgnoreCase(botMC)) {
             return original; // ce n'est pas notre bot → on ne touche à rien
         }
+        String channelMarker = extractChannelMarker(payload);
         boolean isBridgePayload = hasChannelMarker(payload);
+        boolean isOfficerChat = "Officer".equalsIgnoreCase(headerChannel)
+            || "O".equalsIgnoreCase(channelMarker);
         if (!isBridgePayload && !cfg.formatAllGuild) {
             return original; // pas de marqueur canal et mode guilde inactif → on ne touche à rien
         }
+
+        String prefix = resolvePrefix(cfg, isOfficerChat);
+        String prefixColorCode = cfg.randomMode
+            ? randomColorCode()
+            : safeColorCode(isOfficerChat ? cfg.officerPrefixColor : cfg.guildPrefixColor);
 
         // 6. Nettoyage du payload pour supporter plusieurs formats (V1/V2/V3)
         if (!isBridgePayload) {
@@ -90,7 +104,7 @@ public class ChatHudMixin {
             String playerColorCode = cfg.randomMode
                 ? randomColorCode()
                 : safeColorCode(cfg.discordNameColor);
-            String formatted = "§aG §8> "
+            String formatted = "§" + prefixColorCode + prefix + "§8 > "
                 + "§" + playerColorCode + botMC
                 + "§8: §f" + message;
             return Text.literal(formatted);
@@ -102,8 +116,9 @@ public class ChatHudMixin {
                 cleaned = cleaned.substring(end + 2);
             }
         }
-        if (cleaned.matches("^[A-Z] > .+")) {
-            cleaned = cleaned.substring(4);
+        String markerToStrip = extractChannelMarker(cleaned);
+        if (markerToStrip != null && cleaned.startsWith(markerToStrip + " > ")) {
+            cleaned = cleaned.substring(markerToStrip.length() + 3);
         }
 
         String discord;
@@ -121,14 +136,14 @@ public class ChatHudMixin {
         if (discord.isEmpty() || message.isEmpty()) return original;
 
         // 7. Construction du message formaté
-        //    Format : "G > Bridge > PseudoDiscord: message"
+        //    Format : "G> Bridge > PseudoDiscord: message"
         String aliasColorCode = cfg.randomMode
             ? randomColorCode()
             : safeColorCode(cfg.botAliasColor);
         String playerColorCode = cfg.randomMode
             ? randomColorCode()
             : safeColorCode(cfg.discordNameColor);
-        String formatted = "§aG §8> "
+        String formatted = "§" + prefixColorCode + prefix + "§8 > "
             + "§" + aliasColorCode + cfg.botAlias
             + " §8> "
             + "§" + playerColorCode + discord
@@ -149,6 +164,26 @@ public class ChatHudMixin {
     }
 
     @Unique
+    private static String extractChannelMarker(String payload) {
+        if (payload == null || payload.isEmpty()) return null;
+        String cleaned = payload;
+        if (cleaned.startsWith("[")) {
+            int end = cleaned.indexOf("] ");
+            if (end > 0 && end + 2 <= cleaned.length()) {
+                cleaned = cleaned.substring(end + 2);
+            }
+        }
+        Matcher marker = CHANNEL_MARKER.matcher(cleaned);
+        return marker.matches() ? marker.group(1) : null;
+    }
+
+    @Unique
+    private static String resolvePrefix(BridgeConfig cfg, boolean isOfficerChat) {
+        String prefix = isOfficerChat ? cfg.officerPrefix : cfg.guildPrefix;
+        return (prefix == null || prefix.isBlank()) ? (isOfficerChat ? "O" : "G") : prefix.trim();
+    }
+
+    @Unique
     private static boolean hasChannelMarker(String payload) {
         if (payload == null || payload.isEmpty()) return false;
         String cleaned = payload;
@@ -160,6 +195,6 @@ public class ChatHudMixin {
                 cleaned = after;
             }
         }
-        return cleaned.matches("^[A-Z0-9]{1,2} > .+");
+        return CHANNEL_MARKER.matcher(cleaned).matches();
     }
 }

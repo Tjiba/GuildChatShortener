@@ -78,8 +78,8 @@ public class Messages {
         add(BRIDGE_RESET, Language.ENGLISH, "§aBridge bot reset. Automatic detection enabled.");
         add(BRIDGE_RESET, Language.FRENCH, "§aBot bridge réinitialisé. Détection automatique activée.");
         
-        add(BRIDGE_STATUS, Language.ENGLISH, "§7Bot: §e%s §7| Alias: §b%s §7| Colors: §b%s §7/ §3%s §7| Mode: §e%s §7| Random: %s");
-        add(BRIDGE_STATUS, Language.FRENCH, "§7Bot: §e%s §7| Alias: §b%s §7| Couleurs: §b%s §7/ §3%s §7| Mode: §e%s §7| Aléatoire: %s");
+        add(BRIDGE_STATUS, Language.ENGLISH, "§7Bot: §e%s §7| Alias: §b%s §7| Colors: §b%s §7/ §3%s §7| Prefixes: §b%s §7/ §3%s §7| Mode: §e%s §7| Random: %s");
+        add(BRIDGE_STATUS, Language.FRENCH, "§7Bot: §e%s §7| Alias: §b%s §7| Couleurs: §b%s §7/ §3%s §7| Préfixes: §b%s §7/ §3%s §7| Mode: §e%s §7| Aléatoire: %s");
         
         add(BRIDGE_STATUS_MODE_ALL, Language.ENGLISH, "all");
         add(BRIDGE_STATUS_MODE_ALL, Language.FRENCH, "tous");

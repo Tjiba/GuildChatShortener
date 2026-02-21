@@ -55,11 +55,15 @@ public class GuildChatMod implements ClientModInitializer {
                                 : Messages.get(Messages.BRIDGE_STATUS_RANDOM_OFF);
                             String aliasColorCode = safeColorCode(cfg.botAliasColor);
                             String playerColorCode = safeColorCode(cfg.discordNameColor);
+                            String guildPrefixColorCode = safeColorCode(cfg.guildPrefixColor);
+                            String officerPrefixColorCode = safeColorCode(cfg.officerPrefixColor);
                             feedback(ctx.getSource().getClient(),
                                 Messages.format(Messages.BRIDGE_STATUS,
                                     mc, cfg.botAlias,
                                     "§" + aliasColorCode + colorNameFromCode(aliasColorCode),
                                     "§" + playerColorCode + colorNameFromCode(playerColorCode),
+                                    "§" + guildPrefixColorCode + cfg.guildPrefix,
+                                    "§" + officerPrefixColorCode + cfg.officerPrefix,
                                     mode,
                                     randomState));
                             return 1;

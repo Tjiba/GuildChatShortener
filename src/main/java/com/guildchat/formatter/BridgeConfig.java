@@ -28,6 +28,18 @@ public class BridgeConfig {
     // Couleur du pseudo Discord (code Minecraft sans §, ex: "3" pour dark_aqua)
     public String discordNameColor = "3";
 
+    // Préfixe affiché pour le chat de guilde
+    public String guildPrefix = "G";
+
+    // Préfixe affiché pour le chat officier
+    public String officerPrefix = "O";
+
+    // Couleur du préfixe guilde (code Minecraft sans §, ex: "a" pour green)
+    public String guildPrefixColor = "a";
+
+    // Couleur du préfixe officier (code Minecraft sans §, ex: "d" pour magenta)
+    public String officerPrefixColor = "d";
+
     // Active le formatage pour tous les messages de guilde (pas seulement le bridge)
     public boolean formatAllGuild = true;
 

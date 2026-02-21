@@ -8,30 +8,64 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class GuildChatConfigScreen {
     
     private static final ConfigEntryBuilder ENTRY_BUILDER = ConfigEntryBuilder.create();
-    
-    // Mapping des codes couleur à leurs noms et formatages
-    private static final List<String> COLOR_CODES = Arrays.asList(
-            "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"
-    );
-    
-    private static final String[] COLOR_NAMES = {
-            "Black", "Dark Blue", "Dark Green", "Dark Cyan", "Dark Red", "Purple",
-            "Orange", "Light Gray", "Dark Gray", "Light Blue", "Light Green",
-            "Aqua", "Red", "Magenta", "Yellow", "White"
-    };
-    
-    private static final Formatting[] COLOR_FORMATS = {
-            Formatting.BLACK, Formatting.DARK_BLUE, Formatting.DARK_GREEN, Formatting.DARK_AQUA,
-            Formatting.DARK_RED, Formatting.DARK_PURPLE, Formatting.GOLD, Formatting.GRAY,
-            Formatting.DARK_GRAY, Formatting.BLUE, Formatting.GREEN, Formatting.AQUA,
-            Formatting.RED, Formatting.LIGHT_PURPLE, Formatting.YELLOW, Formatting.WHITE
-    };
+
+    private enum ChatColorOption {
+        BLACK("0", "Black", Formatting.BLACK),
+        DARK_BLUE("1", "Dark Blue", Formatting.DARK_BLUE),
+        DARK_GREEN("2", "Dark Green", Formatting.DARK_GREEN),
+        DARK_CYAN("3", "Dark Cyan", Formatting.DARK_AQUA),
+        DARK_RED("4", "Dark Red", Formatting.DARK_RED),
+        PURPLE("5", "Purple", Formatting.DARK_PURPLE),
+        ORANGE("6", "Orange", Formatting.GOLD),
+        LIGHT_GRAY("7", "Light Gray", Formatting.GRAY),
+        DARK_GRAY("8", "Dark Gray", Formatting.DARK_GRAY),
+        LIGHT_BLUE("9", "Light Blue", Formatting.BLUE),
+        LIGHT_GREEN("a", "Light Green", Formatting.GREEN),
+        AQUA("b", "Aqua", Formatting.AQUA),
+        RED("c", "Red", Formatting.RED),
+        MAGENTA("d", "Magenta", Formatting.LIGHT_PURPLE),
+        YELLOW("e", "Yellow", Formatting.YELLOW),
+        WHITE("f", "White", Formatting.WHITE);
+
+        private final String code;
+        private final String displayName;
+        private final Formatting formatting;
+
+        ChatColorOption(String code, String displayName, Formatting formatting) {
+            this.code = code;
+            this.displayName = displayName;
+            this.formatting = formatting;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public Text toText() {
+            return Text.literal(displayName).formatted(formatting);
+        }
+
+        @Override
+        public String toString() {
+            // Return minecraft color code + display name for colored display in enum selector
+            return "§" + code + displayName;
+        }
+
+        public static ChatColorOption fromCode(String code) {
+            if (code != null) {
+                for (ChatColorOption option : values()) {
+                    if (option.code.equalsIgnoreCase(code)) {
+                        return option;
+                    }
+                }
+            }
+            return WHITE;
+        }
+    }
     
     public static Screen create(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
@@ -71,38 +105,74 @@ public class GuildChatConfigScreen {
                 .setTooltip(Text.literal("Enable formatting for all guild messages, not just Discord bridge"))
                 .build());
 
+        general.addEntry(ENTRY_BUILDER
+                .startStrField(Text.literal("Guild Prefix"), BridgeConfig.get().guildPrefix)
+                .setDefaultValue("G")
+                .setSaveConsumer(value -> BridgeConfig.get().guildPrefix = value.isBlank() ? "G" : value)
+                .setTooltip(Text.literal("Prefix for guild chat (shown as prefix>)"))
+                .build());
+
+        general.addEntry(ENTRY_BUILDER
+                .startStrField(Text.literal("Officer Prefix"), BridgeConfig.get().officerPrefix)
+                .setDefaultValue("O")
+                .setSaveConsumer(value -> BridgeConfig.get().officerPrefix = value.isBlank() ? "O" : value)
+                .setTooltip(Text.literal("Prefix for officer chat (shown as prefix>)"))
+                .build());
+
         // ═══════════════════════════════════════════════════════════════════════════════
         // COLORS CATEGORY
         // ═══════════════════════════════════════════════════════════════════════════════
         
-        // Obtenir le nom actuel de la couleur de l'alias
-        String currentAliasColorName = getColorNameByCode(BridgeConfig.get().botAliasColor);
+        ChatColorOption currentAliasColor = ChatColorOption.fromCode(BridgeConfig.get().botAliasColor);
         
         colors.addEntry(ENTRY_BUILDER
-                .startStringDropdownMenu(
+                .startEnumSelector(
                         Text.literal("Bridge Alias Color"),
-                        currentAliasColorName,
-                        GuildChatConfigScreen::createColoredNameText
+                        ChatColorOption.class,
+                        currentAliasColor
                 )
-                .setSelections(getColorNamesList())
-                .setDefaultValue("Aqua")
-                .setSaveConsumer(value -> BridgeConfig.get().botAliasColor = getColorCodeByName(value))
-                .setTooltip(Text.literal("Color of the bridge alias"))
+                .setDefaultValue(ChatColorOption.AQUA)
+                .setSaveConsumer(value -> BridgeConfig.get().botAliasColor = value.getCode())
+                .setTooltip(Text.literal("Click to cycle through colors"))
                 .build());
 
-        // Obtenir le nom actuel de la couleur du joueur Discord
-        String currentPlayerColorName = getColorNameByCode(BridgeConfig.get().discordNameColor);
+        ChatColorOption currentPlayerColor = ChatColorOption.fromCode(BridgeConfig.get().discordNameColor);
         
         colors.addEntry(ENTRY_BUILDER
-                .startStringDropdownMenu(
+                .startEnumSelector(
                         Text.literal("Discord Player Color"),
-                        currentPlayerColorName,
-                        GuildChatConfigScreen::createColoredNameText
+                        ChatColorOption.class,
+                        currentPlayerColor
                 )
-                .setSelections(getColorNamesList())
-                .setDefaultValue("Dark Cyan")
-                .setSaveConsumer(value -> BridgeConfig.get().discordNameColor = getColorCodeByName(value))
-                .setTooltip(Text.literal("Color of the Discord player name"))
+                .setDefaultValue(ChatColorOption.DARK_CYAN)
+                .setSaveConsumer(value -> BridgeConfig.get().discordNameColor = value.getCode())
+                .setTooltip(Text.literal("Click to cycle through colors"))
+                .build());
+
+        ChatColorOption currentGuildPrefixColor = ChatColorOption.fromCode(BridgeConfig.get().guildPrefixColor);
+
+        colors.addEntry(ENTRY_BUILDER
+                .startEnumSelector(
+                        Text.literal("Guild Prefix Color"),
+                        ChatColorOption.class,
+                        currentGuildPrefixColor
+                )
+                .setDefaultValue(ChatColorOption.LIGHT_GREEN)
+                .setSaveConsumer(value -> BridgeConfig.get().guildPrefixColor = value.getCode())
+                .setTooltip(Text.literal("Click to cycle through colors"))
+                .build());
+
+        ChatColorOption currentOfficerPrefixColor = ChatColorOption.fromCode(BridgeConfig.get().officerPrefixColor);
+
+        colors.addEntry(ENTRY_BUILDER
+                .startEnumSelector(
+                        Text.literal("Officer Prefix Color"),
+                        ChatColorOption.class,
+                        currentOfficerPrefixColor
+                )
+                .setDefaultValue(ChatColorOption.MAGENTA)
+                .setSaveConsumer(value -> BridgeConfig.get().officerPrefixColor = value.getCode())
+                .setTooltip(Text.literal("Click to cycle through colors"))
                 .build());
 
         colors.addEntry(ENTRY_BUILDER
@@ -129,45 +199,5 @@ public class GuildChatConfigScreen {
                 .build());
 
         return builder.build();
-    }
-    
-    /**
-     * Retourne la liste des noms de couleurs
-     */
-    private static List<String> getColorNamesList() {
-        return Arrays.stream(COLOR_NAMES).collect(Collectors.toList());
-    }
-    
-    /**
-     * Obtient le nom de la couleur à partir du code
-     */
-    private static String getColorNameByCode(String code) {
-        int index = COLOR_CODES.indexOf(code);
-        if (index >= 0 && index < COLOR_NAMES.length) {
-            return COLOR_NAMES[index];
-        }
-        return "White";
-    }
-    
-    /**
-     * Obtient le code de la couleur à partir du nom
-     */
-    private static String getColorCodeByName(String name) {
-        int index = Arrays.asList(COLOR_NAMES).indexOf(name);
-        if (index >= 0 && index < COLOR_CODES.size()) {
-            return COLOR_CODES.get(index);
-        }
-        return "f";
-    }
-    
-    /**
-     * Crée un Text coloré avec le nom de la couleur dans la couleur correspondante
-     */
-    private static Text createColoredNameText(String colorName) {
-        int index = Arrays.asList(COLOR_NAMES).indexOf(colorName);
-        if (index >= 0) {
-            return Text.literal(colorName).formatted(COLOR_FORMATS[index]);
-        }
-        return Text.literal(colorName);
     }
 }
