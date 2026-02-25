@@ -37,14 +37,15 @@ public class ChatHudMixin {
     private static final Pattern COLOR_CODE = Pattern.compile("[§&][0-9a-fk-orA-FK-OR]");
 
     // Pattern bridge (en-tete) :
-    //   Groupe 1 = canal (Guild ou Officer)
+    //   Groupe 1 = canal (Guild, Officer, G ou O)
     //   Groupe 2 = rang Hypixel du bot (optionnel)
     //   Groupe 3 = nom MC du bot
     //   Groupe 4 = rôle guild : GM ou OFFICER (optionnel)
     //   Groupe 5 = reste du message (payload)
+    // Supporte les formats: "Guild > [RANG] NomBot: payload" ou "Guild > [RANG] NomBot [ROLE]: payload"
     @Unique
     private static final Pattern BRIDGE_HEADER = Pattern.compile(
-        "^(Guild|Officer) > (?:\\[([A-Z+]+)] )?([\\w]+)(?: \\[([A-Za-z0-9+_]+)])?: (.+)$"
+        "^(Guild|Officer|G|O) > (?:\\[([A-Z+]+)] )?([\\w]+)(?:\\s+\\[([A-Za-z0-9+_]+)])?:\\s*(.+)$"
     );
 
     @Unique
@@ -67,8 +68,9 @@ public class ChatHudMixin {
         String raw = COLOR_CODE.matcher(original.getString()).replaceAll("");
         raw = raw.replaceAll("\\s+", " ").trim();
 
-        // 2. Seulement les messages de guild / officer
-        if (!raw.startsWith("Guild > ") && !raw.startsWith("Officer > ")) return original;
+        // 2. Seulement les messages de guild / officer (longues formes ou abrégées)
+        if (!raw.startsWith("Guild > ") && !raw.startsWith("Officer > ") 
+            && !raw.startsWith("G > ") && !raw.startsWith("O > ")) return original;
 
         // 3. Test du pattern bridge
         Matcher m = BRIDGE_HEADER.matcher(raw);
