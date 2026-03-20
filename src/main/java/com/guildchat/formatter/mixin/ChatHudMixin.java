@@ -60,6 +60,9 @@ public class ChatHudMixin {
     @Unique
     private static final Pattern DISCORD_WARNING_SUFFIX = Pattern.compile("\\s*Please be mindful of Discord links in chat as they may pose a security risk\\s*$");
 
+    @Unique
+    private static final Pattern GUILD_VERSION_TAG = Pattern.compile("^\\[(V[123])]\\s+", Pattern.CASE_INSENSITIVE);
+
     @ModifyVariable(
         method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V",
         at = @At("HEAD"),
@@ -102,11 +105,12 @@ public class ChatHudMixin {
             return original; // ce n'est pas notre bot → on ne touche à rien
         }
         String channelMarker = extractChannelMarker(payload);
-        boolean isBridgePayload = hasChannelMarker(payload);
+        boolean hasVersionTag = hasGuildVersionTag(payload);
+        boolean isBridgePayload = hasChannelMarker(payload) || hasVersionTag;
         boolean isOfficerChat = "Officer".equalsIgnoreCase(headerChannel)
             || "O".equalsIgnoreCase(channelMarker);
         if (!isBridgePayload && !cfg.formatAllGuild) {
-            return original; // pas de marqueur canal et mode guilde inactif → on ne touche à rien
+            return original; // pas de marqueur canal/version et mode guilde inactif → on ne touche à rien
         }
 
         String prefix = resolvePrefix(cfg, isOfficerChat);
@@ -126,13 +130,17 @@ public class ChatHudMixin {
                 + "§8: §f" + message;
             return Text.literal(formatted);
         }
-        String cleaned = payload;
-        if (cleaned.startsWith("[")) {
-            int end = cleaned.indexOf("] ");
-            if (end > 0 && end + 2 <= cleaned.length()) {
-                cleaned = cleaned.substring(end + 2);
-            }
+        String cleaned = stripLeadingNonVersionTag(payload);
+
+        String guildVersion = null;
+        Matcher versionMatcher = GUILD_VERSION_TAG.matcher(cleaned);
+        if (versionMatcher.find()) {
+            guildVersion = versionMatcher.group(1).toUpperCase();
+            cleaned = cleaned.substring(versionMatcher.end()).trim();
         }
+
+        cleaned = stripLeadingNonVersionTag(cleaned);
+
         String markerToStrip = extractChannelMarker(cleaned);
         if (markerToStrip != null && cleaned.startsWith(markerToStrip + " > ")) {
             cleaned = cleaned.substring(markerToStrip.length() + 3);
@@ -153,18 +161,25 @@ public class ChatHudMixin {
         if (discord.isEmpty() || message.isEmpty()) return original;
 
         // 7. Construction du message formaté
-        //    Format : "G> Bridge > PseudoDiscord: message"
+        //    Format : "G > v2 > PseudoDiscord : message" (sinon fallback alias, ex: Bridge)
         String aliasColorCode = cfg.randomMode
             ? randomColorCode()
             : safeColorCode(cfg.botAliasColor);
         String playerColorCode = cfg.randomMode
             ? randomColorCode()
             : safeColorCode(cfg.discordNameColor);
+
+        boolean useVersion = cfg.versionFormattingEnabled && guildVersion != null && !guildVersion.isBlank();
+        String versionOrAlias = useVersion ? guildVersion : cfg.botAlias;
+        String versionOrAliasColorCode = cfg.randomMode
+            ? randomColorCode()
+            : resolveVersionOrAliasColorCode(cfg, versionOrAlias, useVersion, aliasColorCode);
+
         String formatted = "§" + prefixColorCode + prefix + "§8 > "
-            + "§" + aliasColorCode + cfg.botAlias
+            + "§" + versionOrAliasColorCode + versionOrAlias
             + " §8> "
             + "§" + playerColorCode + discord
-            + "§8: §f" + message;
+            + "§8 : §f" + message;
 
         return Text.literal(formatted);
     }
@@ -183,13 +198,7 @@ public class ChatHudMixin {
     @Unique
     private static String extractChannelMarker(String payload) {
         if (payload == null || payload.isEmpty()) return null;
-        String cleaned = payload;
-        if (cleaned.startsWith("[")) {
-            int end = cleaned.indexOf("] ");
-            if (end > 0 && end + 2 <= cleaned.length()) {
-                cleaned = cleaned.substring(end + 2);
-            }
-        }
+        String cleaned = stripLeadingNonVersionTag(payload);
         Matcher marker = CHANNEL_MARKER.matcher(cleaned);
         return marker.matches() ? marker.group(1) : null;
     }
@@ -203,7 +212,7 @@ public class ChatHudMixin {
     @Unique
     private static boolean hasChannelMarker(String payload) {
         if (payload == null || payload.isEmpty()) return false;
-        String cleaned = payload;
+        String cleaned = stripLeadingNonVersionTag(payload);
         if (cleaned.startsWith("[")) {
             int end = cleaned.indexOf("] ");
             if (end > 0 && end + 2 <= cleaned.length()) {
@@ -213,5 +222,34 @@ public class ChatHudMixin {
             }
         }
         return CHANNEL_MARKER.matcher(cleaned).matches();
+    }
+
+    @Unique
+    private static boolean hasGuildVersionTag(String payload) {
+        if (payload == null || payload.isEmpty()) return false;
+        String cleaned = stripLeadingNonVersionTag(payload);
+        return GUILD_VERSION_TAG.matcher(cleaned).find();
+    }
+
+    @Unique
+    private static String stripLeadingNonVersionTag(String payload) {
+        if (payload == null || payload.isEmpty()) return payload;
+        if (!payload.startsWith("[")) return payload;
+        int end = payload.indexOf("] ");
+        if (end <= 0 || end + 2 > payload.length()) return payload;
+        String tag = payload.substring(1, end);
+        if ("V1".equalsIgnoreCase(tag) || "V2".equalsIgnoreCase(tag) || "V3".equalsIgnoreCase(tag)) {
+            return payload;
+        }
+        return payload.substring(end + 2);
+    }
+
+    @Unique
+    private static String resolveVersionOrAliasColorCode(BridgeConfig cfg, String versionOrAlias, boolean useVersion, String aliasColorCode) {
+        if (!useVersion) return aliasColorCode;
+        if ("V1".equalsIgnoreCase(versionOrAlias)) return safeColorCode(cfg.guildVersionV1Color);
+        if ("V2".equalsIgnoreCase(versionOrAlias)) return safeColorCode(cfg.guildVersionV2Color);
+        if ("V3".equalsIgnoreCase(versionOrAlias)) return safeColorCode(cfg.guildVersionV3Color);
+        return aliasColorCode;
     }
 }

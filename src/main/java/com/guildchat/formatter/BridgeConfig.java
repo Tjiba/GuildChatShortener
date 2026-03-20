@@ -49,6 +49,14 @@ public class BridgeConfig {
     // Langue de l'interface (english ou french)
     public String language = "english";
 
+    // Active l'affichage de la version de guilde (v1/v2/v3) a la place de l'alias bridge
+    public boolean versionFormattingEnabled = true;
+
+    // Couleurs dediees aux labels de version de guilde
+    public String guildVersionV1Color = "a";
+    public String guildVersionV2Color = "e";
+    public String guildVersionV3Color = "c";
+
     // ── Getters ───────────────────────────────────────────────────────────────
     public Language getLanguage() {
         Language lang = Language.fromString(language);

@@ -30,12 +30,10 @@
 - 🌍 **Multilingual Support** - Full support for English and French languages
 - 🎨 **Color Customization** - Change the colors of the bridge alias and player names
 - 🏷️ **Custom Aliases** - Replace the bot name with a short alias (e.g., "Discord", "Bridge", "DC")
-- ⚙️ **Flexible Configuration** - Intuitive in-game commands to adjust settings
+- ⚙️ **Flexible Configuration** - Configure via Mod Menu (Cloth Config required)
 - 🔄 **Smart Detection** - Automatically recognizes Discord bridge messages
 - 💾 **Automatic Saving** - Your configuration persists between sessions
 - 🌐 **Global Mode** - Enable formatting for all guild messages
-- 🆕 **Update Checker** - Automatic version detection and manual update check with `/bridge update`
-- 🎲 **Random Colors** - Optional random color assignment for Discord player names
 
 ---
 
@@ -64,31 +62,18 @@
 ### Essential Commands
 
 ```
-/bridge help              # Show help
-/bridge update            # Check for mod updates
-/bridgename <alias>       # Change alias (ex: /bridgename DC)
-/bridgecolor <color>      # Change alias color (ex: /bridgecolor red)
-/bridgeplayercolor <color> # Change player name color
-/bridgelanguage <lang>    # Change language (english/french)
-/bridge random            # Toggle random colors for Discord names
+/bridge status            # Show configuration
+/gcs                      # Open this mod's config screen
+/guildchatshortener       # Open this mod's config screen
 ```
 
-**Examples**:
-```
-/bridgename Bridge        # Set alias to "Bridge"
-/bridgecolor yellow       # Make alias yellow
-/bridgelanguage french    # Switch to French
-/bridge update            # Check for updates manually
-/bridge random on         # Enable random colors
-```
+Configure colors, aliases, and options from Mod Menu (Cloth Config required).
 
 ---
 
 ## 🎨 Available Colors
 
-Use color names in commands: `black`, `dark_blue`, `dark_green`, `dark_aqua`, `dark_red`, `dark_purple`, `gold`, `gray`, `dark_gray`, `blue`, `green`, `aqua`, `red`, `light_purple`, `yellow`, `white`
-
-**Examples**: `/bc red`, `/bpc green`, `/bridgecolor aqua`
+Use the Mod Menu config screen to pick colors for aliases and player names.
 
 ---
 

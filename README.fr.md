@@ -30,12 +30,10 @@
 - 🌍 **Support multilingue** - Support complet de l'anglais et du français
 - 🎨 **Personnalisation des couleurs** - Changez les couleurs de l'alias du bridge et des pseudos
 - 🏷️ **Alias personnalisable** - Remplacez le nom du bot par un alias court (ex: "Discord", "Bridge", "DC")
-- ⚙️ **Configuration flexible** - Commandes intuitives pour ajuster la configuration en jeu
+- ⚙️ **Configuration flexible** - Configuration via Mod Menu (Cloth Config requis)
 - 🔄 **Détection intelligente** - Reconnaît automatiquement les messages du bridge Discord
 - 💾 **Sauvegarde automatique** - Votre configuration est persistante entre les sessions
 - 🌐 **Mode global** - Activez le formatage pour tous les messages de guilde
-- 🆕 **Vérificateur de mises à jour** - Détection automatique de version et vérification manuelle avec `/bridge update`
-- 🎲 **Couleurs aléatoires** - Attribution aléatoire optionnelle de couleurs pour les pseudos Discord
 
 ---
 
@@ -66,31 +64,18 @@ Vous pouvez aussi modifier les réglages depuis ModMenu (Cloth Config est requis
 ### Commandes essentielles
 
 ```
-/bridge help              # Affiche l'aide
-/bridge update            # Vérifie les mises à jour du mod
-/bridgename <alias>       # Change l'alias (ex: /bridgename DC)
-/bridgecolor <couleur>    # Change la couleur de l'alias (ex: /bridgecolor rouge)
-/bridgeplayercolor <color> # Change la couleur du pseudo joueur
-/bridgelanguage <lang>    # Change la langue (english/french)
-/bridge random            # Active/désactive les couleurs aléatoires
+/bridge status            # Affiche la configuration
+/gcs                      # Ouvre la config du mod
+/guildchatshortener       # Ouvre la config du mod
 ```
 
-**Exemples** :
-```
-/bridgename Bridge        # Met l'alias à "Bridge"
-/bridgecolor jaune        # Rend l'alias jaune
-/bridgelanguage french    # Passer au français
-/bridge update            # Vérifier manuellement les mises à jour
-/bridge random on         # Activer les couleurs aléatoires
-```
+Modifie les couleurs, alias et options via Mod Menu (Cloth Config requis).
 
 ---
 
 ## 🎨 Couleurs disponibles
 
-Utilisez les noms de couleurs dans les commandes : `noir`, `bleu fonce`, `vert fonce`, `cyan fonce`, `rouge fonce`, `violet fonce`, `or`, `gris`, `gris fonce`, `bleu`, `vert`, `cyan`, `rouge`, `rose clair`, `jaune`, `blanc`
-
-**Exemples** : `/bc rouge`, `/bpc vert`, `/bridgecolor cyan`
+Utilise l'écran de configuration Mod Menu pour choisir les couleurs.
 
 ---
 

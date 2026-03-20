@@ -112,6 +112,13 @@ public class GuildChatConfigScreen {
                 .setTooltip(Text.literal("Prefix for officer chat (shown as prefix>)"))
                 .build());
 
+        general.addEntry(ENTRY_BUILDER
+                .startBooleanToggle(Text.literal("Version Formatting (v1/v2/v3)"), BridgeConfig.get().versionFormattingEnabled)
+                .setDefaultValue(true)
+                .setSaveConsumer(value -> BridgeConfig.get().versionFormattingEnabled = value)
+                .setTooltip(Text.literal("Display guild version label instead of Bridge alias when [V1]/[V2]/[V3] is detected"))
+                .build());
+
         // ═══════════════════════════════════════════════════════════════════════════════
         // COLORS CATEGORY
         // ═══════════════════════════════════════════════════════════════════════════════
@@ -166,6 +173,42 @@ public class GuildChatConfigScreen {
                 .setDefaultValue(ChatColorOption.MAGENTA)
                 .setSaveConsumer(value -> BridgeConfig.get().officerPrefixColor = value.getCode())
                 .setTooltip(Text.literal("Click to cycle through colors"))
+                .build());
+
+        ChatColorOption currentV1Color = ChatColorOption.fromCode(BridgeConfig.get().guildVersionV1Color);
+        colors.addEntry(ENTRY_BUILDER
+                .startEnumSelector(
+                        Text.literal("Version V1 Color"),
+                        ChatColorOption.class,
+                        currentV1Color
+                )
+                .setDefaultValue(ChatColorOption.LIGHT_GREEN)
+                .setSaveConsumer(value -> BridgeConfig.get().guildVersionV1Color = value.getCode())
+                .setTooltip(Text.literal("Color used for the v1 label"))
+                .build());
+
+        ChatColorOption currentV2Color = ChatColorOption.fromCode(BridgeConfig.get().guildVersionV2Color);
+        colors.addEntry(ENTRY_BUILDER
+                .startEnumSelector(
+                        Text.literal("Version V2 Color"),
+                        ChatColorOption.class,
+                        currentV2Color
+                )
+                .setDefaultValue(ChatColorOption.YELLOW)
+                .setSaveConsumer(value -> BridgeConfig.get().guildVersionV2Color = value.getCode())
+                .setTooltip(Text.literal("Color used for the v2 label"))
+                .build());
+
+        ChatColorOption currentV3Color = ChatColorOption.fromCode(BridgeConfig.get().guildVersionV3Color);
+        colors.addEntry(ENTRY_BUILDER
+                .startEnumSelector(
+                        Text.literal("Version V3 Color"),
+                        ChatColorOption.class,
+                        currentV3Color
+                )
+                .setDefaultValue(ChatColorOption.RED)
+                .setSaveConsumer(value -> BridgeConfig.get().guildVersionV3Color = value.getCode())
+                .setTooltip(Text.literal("Color used for the v3 label"))
                 .build());
 
         colors.addEntry(ENTRY_BUILDER

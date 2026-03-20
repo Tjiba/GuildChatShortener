@@ -1,48 +1,35 @@
 package com.guildchat.formatter;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Method;
 
 public class GuildChatMod implements ClientModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("guildchat-formatter");
 
+    private static String pendingConfigModId = null;
+
     @Override
     public void onInitializeClient() {
         LOGGER.info(Messages.get(Messages.MOD_LOADED));
         BridgeConfig.get(); // initialise la config
-        
+
         // Initialiser le notificateur de mise à jour (vérifie en ligne sur GitHub)
         UpdateNotifier.init();
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
             dispatcher.register(
                 ClientCommandManager.literal("bridge")
-
-                    // /bridge reset  → détection auto
-                    .then(ClientCommandManager.literal("reset")
-                        .executes(ctx -> {
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.botMCName = null;
-                            cfg.botAlias  = "Bridge";
-                            cfg.botAliasColor = "b";
-                            cfg.discordNameColor = "3";
-                            cfg.randomMode = false;
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                Messages.get(Messages.BRIDGE_RESET));
-                            return 1;
-                        })
-                    )
-
-                    // /bridge status  → affiche la config actuelle
                     .then(ClientCommandManager.literal("status")
                         .executes(ctx -> {
                             BridgeConfig cfg = BridgeConfig.get();
@@ -69,318 +56,49 @@ public class GuildChatMod implements ClientModInitializer {
                             return 1;
                         })
                     )
-
-                    // /bridge help → aide courte
-                    .then(ClientCommandManager.literal("help")
-                        .executes(ctx -> {
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_BRIDGESETUP));
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_STATUS));
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_RESET));
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_NAME));
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_COLOR));
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_PLAYERCOLOR));
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_ACTIVATEALL));
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_RANDOM));
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_LANGUAGE));
-                            feedback(ctx.getSource().getClient(), Messages.get(Messages.HELP_UPDATE));
-                            return 1;
-                        })
-                    )
-                    
-                    // /bridge update → vérifier les mises à jour
-                    .then(ClientCommandManager.literal("update")
-                        .executes(ctx -> {
-                            UpdateNotifier.checkUpdateManually(ctx.getSource().getClient());
-                            return 1;
-                        })
-                    )
-                    
-                    // /bridge random → toggle couleurs aléatoires
-                    .then(ClientCommandManager.literal("random")
-                        .executes(ctx -> {
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.randomMode = !cfg.randomMode;
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                cfg.randomMode
-                                    ? Messages.get(Messages.RANDOM_ENABLED)
-                                    : Messages.get(Messages.RANDOM_DISABLED));
-                            return 1;
-                        })
-                        .then(ClientCommandManager.literal("on")
-                            .executes(ctx -> {
-                                BridgeConfig cfg = BridgeConfig.get();
-                                cfg.randomMode = true;
-                                cfg.save();
-                                BridgeConfig.reload();
-                                feedback(ctx.getSource().getClient(),
-                                    Messages.get(Messages.RANDOM_ENABLED));
-                                return 1;
-                            })
-                        )
-                        .then(ClientCommandManager.literal("off")
-                            .executes(ctx -> {
-                                BridgeConfig cfg = BridgeConfig.get();
-                                cfg.randomMode = false;
-                                cfg.save();
-                                BridgeConfig.reload();
-                                feedback(ctx.getSource().getClient(),
-                                    Messages.get(Messages.RANDOM_DISABLED));
-                                return 1;
-                            })
-                        )
-                    )
             )
         );
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
             dispatcher.register(
-                ClientCommandManager.literal("bridgesetup")
-                    .then(ClientCommandManager.argument("nomMC", StringArgumentType.word())
-                        .then(ClientCommandManager.argument("alias", StringArgumentType.greedyString())
-                            .executes(ctx -> {
-                                String nomMC = StringArgumentType.getString(ctx, "nomMC");
-                                String alias  = StringArgumentType.getString(ctx, "alias");
-
-                                BridgeConfig cfg = BridgeConfig.get();
-                                cfg.botMCName = nomMC;
-                                cfg.botAlias  = alias;
-                                cfg.save();
-                                BridgeConfig.reload();
-
-                                feedback(ctx.getSource().getClient(),
-                                    Messages.format(Messages.BRIDGE_DEFINED, nomMC, alias));
-                                return 1;
-                            })
-                        )
-                    )
-            )
-        );
-
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
-            dispatcher.register(
-                ClientCommandManager.literal("bridgename")
-                    .then(ClientCommandManager.literal("reset")
-                        .executes(ctx -> {
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.botAlias = "Bridge";
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                Messages.get(Messages.BRIDGE_NAME_RESET));
-                            return 1;
-                        })
-                    )
-                    .then(ClientCommandManager.argument("alias", StringArgumentType.greedyString())
-                        .executes(ctx -> {
-                            String alias = StringArgumentType.getString(ctx, "alias");
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.botAlias = alias;
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.BRIDGE_NAME_SET, alias));
-                            return 1;
-                        })
-                    )
-            )
-        );
-
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
-            dispatcher.register(
-                ClientCommandManager.literal("bridgecolor")
-                    .then(ClientCommandManager.literal("reset")
-                        .executes(ctx -> {
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.botAliasColor = "b";
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.COLOR_BRIDGE_RESET, colorNameFromCode("b")));
-                            return 1;
-                        })
-                    )
-                    .then(ClientCommandManager.argument("couleur", StringArgumentType.greedyString())
-                        .executes(ctx -> {
-                            String input = StringArgumentType.getString(ctx, "couleur");
-                            String code = resolveColorCode(input);
-                            if (code == null) {
-                                feedback(ctx.getSource().getClient(),
-                                    Messages.format(Messages.COLOR_UNKNOWN, input, colorHelpList()));
-                                return 0;
-                            }
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.botAliasColor = code;
-                            cfg.save();
-                            BridgeConfig.reload();
-                            String colorName = colorNameFromCode(code);
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.COLOR_BRIDGE_SET, code, colorName, code));
-                            return 1;
-                        })
-                    )
-            )
-        );
-
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
-            dispatcher.register(
-                ClientCommandManager.literal("bridgeplayercolor")
-                    .then(ClientCommandManager.literal("reset")
-                        .executes(ctx -> {
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.discordNameColor = "3";
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.COLOR_PLAYER_RESET, colorNameFromCode("3")));
-                            return 1;
-                        })
-                    )
-                    .then(ClientCommandManager.argument("couleur", StringArgumentType.greedyString())
-                        .executes(ctx -> {
-                            String input = StringArgumentType.getString(ctx, "couleur");
-                            String code = resolveColorCode(input);
-                            if (code == null) {
-                                feedback(ctx.getSource().getClient(),
-                                    Messages.format(Messages.COLOR_UNKNOWN, input, colorHelpList()));
-                                return 0;
-                            }
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.discordNameColor = code;
-                            cfg.save();
-                            BridgeConfig.reload();
-                            String colorName = colorNameFromCode(code);
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.COLOR_PLAYER_SET, code, colorName, code));
-                            return 1;
-                        })
-                    )
-            )
-        );
-
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
-            dispatcher.register(
-                ClientCommandManager.literal("bc")
-                    .then(ClientCommandManager.literal("reset")
-                        .executes(ctx -> {
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.botAliasColor = "b";
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.COLOR_BRIDGE_RESET, colorNameFromCode("b")));
-                            return 1;
-                        })
-                    )
-                    .then(ClientCommandManager.argument("couleur", StringArgumentType.greedyString())
-                        .executes(ctx -> {
-                            String input = StringArgumentType.getString(ctx, "couleur");
-                            String code = resolveColorCode(input);
-                            if (code == null) {
-                                feedback(ctx.getSource().getClient(),
-                                    Messages.format(Messages.COLOR_UNKNOWN, input, colorHelpList()));
-                                return 0;
-                            }
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.botAliasColor = code;
-                            cfg.save();
-                            BridgeConfig.reload();
-                            String colorName = colorNameFromCode(code);
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.COLOR_BRIDGE_SET, code, colorName, code));
-                            return 1;
-                        })
-                    )
-            )
-        );
-
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
-            dispatcher.register(
-                ClientCommandManager.literal("bpc")
-                    .then(ClientCommandManager.literal("reset")
-                        .executes(ctx -> {
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.discordNameColor = "3";
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.COLOR_PLAYER_RESET, colorNameFromCode("3")));
-                            return 1;
-                        })
-                    )
-                    .then(ClientCommandManager.argument("couleur", StringArgumentType.greedyString())
-                        .executes(ctx -> {
-                            String input = StringArgumentType.getString(ctx, "couleur");
-                            String code = resolveColorCode(input);
-                            if (code == null) {
-                                feedback(ctx.getSource().getClient(),
-                                    Messages.format(Messages.COLOR_UNKNOWN, input, colorHelpList()));
-                                return 0;
-                            }
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.discordNameColor = code;
-                            cfg.save();
-                            BridgeConfig.reload();
-                            String colorName = colorNameFromCode(code);
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.COLOR_PLAYER_SET, code, colorName, code));
-                            return 1;
-                        })
-                    )
-            )
-        );
-
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
-            dispatcher.register(
-                ClientCommandManager.literal("bridgeactivateall")
+                ClientCommandManager.literal("gcs")
                     .executes(ctx -> {
-                        BridgeConfig cfg = BridgeConfig.get();
-                        cfg.formatAllGuild = true;
-                        cfg.save();
-                        BridgeConfig.reload();
-                        feedback(ctx.getSource().getClient(),
-                            Messages.get(Messages.FORMAT_ALL_ENABLED));
+                        MinecraftClient client = ctx.getSource().getClient();
+                        if (!isModMenuLoaded()) {
+                            feedback(client, "Mod Menu is not installed.");
+                            return 0;
+                        }
+                        pendingConfigModId = "guildchat-shortener";
                         return 1;
                     })
-                    .then(ClientCommandManager.literal("off")
-                        .executes(ctx -> {
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.formatAllGuild = false;
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                Messages.get(Messages.FORMAT_ALL_DISABLED));
-                            return 1;
-                        })
-                    )
             )
         );
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
             dispatcher.register(
-                ClientCommandManager.literal("bridgelanguage")
-                    .then(ClientCommandManager.argument("langue", StringArgumentType.greedyString())
-                        .executes(ctx -> {
-                            String input = StringArgumentType.getString(ctx, "langue");
-                            Language lang = Language.fromString(input);
-                            if (lang == null) {
-                                feedback(ctx.getSource().getClient(),
-                                    Messages.format(Messages.LANGUAGE_UNKNOWN, input, 
-                                        Messages.get(Messages.LANGUAGE_AVAILABLE)));
-                                return 0;
-                            }
-                            BridgeConfig cfg = BridgeConfig.get();
-                            cfg.language = lang.name().toLowerCase();
-                            cfg.save();
-                            BridgeConfig.reload();
-                            feedback(ctx.getSource().getClient(),
-                                Messages.format(Messages.LANGUAGE_SET, lang.getDisplayName()));
-                            return 1;
-                        })
-                    )
+                ClientCommandManager.literal("guildchatshortener")
+                    .executes(ctx -> {
+                        MinecraftClient client = ctx.getSource().getClient();
+                        if (!isModMenuLoaded()) {
+                            feedback(client, "Mod Menu is not installed.");
+                            return 0;
+                        }
+                        pendingConfigModId = "guildchat-shortener";
+                        return 1;
+                    })
             )
         );
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (pendingConfigModId == null) return;
+            Screen configScreen = getConfigScreen(pendingConfigModId, client.currentScreen);
+            pendingConfigModId = null;
+            if (configScreen != null) {
+                client.setScreen(configScreen);
+            } else {
+                feedback(client, "Failed to open config screen.");
+            }
+        });
     }
 
     private static void feedback(MinecraftClient mc, String msg) {
@@ -391,45 +109,6 @@ public class GuildChatMod implements ClientModInitializer {
     private static String safeColorCode(String code) {
         if (code == null || code.isEmpty()) return "b";
         return code.substring(0, 1).toLowerCase();
-    }
-
-    private static String resolveColorCode(String input) {
-        if (input == null || input.isEmpty()) return null;
-        String normalized = input.toLowerCase().replace('-', '_').replace(' ', '_');
-        if (normalized.startsWith("§") || normalized.startsWith("&")) normalized = normalized.substring(1);
-        if (normalized.length() == 1 && normalized.matches("[0-9a-f]")) return normalized;
-        return switch (normalized) {
-            case "black", "noir" -> "0";
-            case "dark_blue", "bleu_fonce" -> "1";
-            case "dark_green", "vert_fonce" -> "2";
-            case "dark_aqua", "cyan_fonce" -> "3";
-            case "dark_red", "rouge_fonce" -> "4";
-            case "dark_purple", "violet_fonce" -> "5";
-            case "gold", "or" -> "6";
-            case "gray", "gris", "gris_clair" -> "7";
-            case "dark_gray", "gris_fonce" -> "8";
-            case "blue", "bleu" -> "9";
-            case "green", "vert" -> "a";
-            case "aqua", "cyan" -> "b";
-            case "red", "rouge" -> "c";
-            case "light_purple", "rose_clair" -> "d";
-            case "yellow", "jaune" -> "e";
-            case "white", "blanc" -> "f";
-            default -> null;
-        };
-    }
-
-    private static String colorHelpList() {
-        Language lang = BridgeConfig.get().getLanguage();
-        if (lang == Language.ENGLISH) {
-            return "black (&0), dark blue (&1), dark green (&2), dark cyan (&3), dark red (&4), " +
-                "dark purple (&5), gold (&6), gray (&7), dark gray (&8), blue (&9), green (&a), " +
-                "cyan (&b), red (&c), light purple (&d), yellow (&e), white (&f)";
-        } else {
-            return "noir (&0), bleu foncé (&1), vert foncé (&2), cyan foncé (&3), rouge foncé (&4), " +
-                "violet foncé (&5), or (&6), gris (&7), gris foncé (&8), bleu (&9), vert (&a), " +
-                "cyan (&b), rouge (&c), rose clair (&d), jaune (&e), blanc (&f)";
-        }
     }
 
     private static String colorNameFromCode(String code) {
@@ -453,5 +132,20 @@ public class GuildChatMod implements ClientModInitializer {
             case "f" -> Messages.get(Messages.COLOR_WHITE);
             default -> Messages.get(Messages.COLOR_AQUA);
         };
+    }
+
+    private static boolean isModMenuLoaded() {
+        return FabricLoader.getInstance().isModLoaded("modmenu");
+    }
+
+    private static Screen getConfigScreen(String modId, Screen parent) {
+        try {
+            Class<?> modMenuClass = Class.forName("com.terraformersmc.modmenu.ModMenu");
+            Method getConfigScreen = modMenuClass.getMethod("getConfigScreen", String.class, Screen.class);
+            Object screen = getConfigScreen.invoke(null, modId, parent);
+            return (Screen) screen;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return null;
+        }
     }
 }

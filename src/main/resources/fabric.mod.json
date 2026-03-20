@@ -3,7 +3,7 @@
   "id": "guildchat-shortener",
   "version": "${version}",
   "name": "Guild Chat Shortener",
-  "description": "Formate les messages bridge Discord dans la guild Hypixel. Commande: /bridge <BotMC> <AliasVoulu>",
+  "description": "Formate les messages bridge Discord dans la guild Hypixel. Commandes: /bridge status, /gcs, /guildchatshortener",
   "authors": ["Tjiba"],
   "license": "MIT",
   "icon": "icon.png",

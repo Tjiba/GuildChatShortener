@@ -9,27 +9,11 @@ public class Messages {
     
     // Message keys
     public static final String MOD_LOADED = "mod.loaded";
-    public static final String BRIDGE_RESET = "bridge.reset";
     public static final String BRIDGE_STATUS = "bridge.status";
     public static final String BRIDGE_STATUS_MODE_ALL = "bridge.status.mode.all";
     public static final String BRIDGE_STATUS_MODE_BRIDGE = "bridge.status.mode.bridge";
     public static final String BRIDGE_STATUS_RANDOM_ON = "bridge.status.random.on";
     public static final String BRIDGE_STATUS_RANDOM_OFF = "bridge.status.random.off";
-    public static final String BRIDGE_DEFINED = "bridge.defined";
-    public static final String BRIDGE_NAME_RESET = "bridge.name.reset";
-    public static final String BRIDGE_NAME_SET = "bridge.name.set";
-    public static final String COLOR_BRIDGE_RESET = "color.bridge.reset";
-    public static final String COLOR_BRIDGE_SET = "color.bridge.set";
-    public static final String COLOR_PLAYER_RESET = "color.player.reset";
-    public static final String COLOR_PLAYER_SET = "color.player.set";
-    public static final String COLOR_UNKNOWN = "color.unknown";
-    public static final String FORMAT_ALL_ENABLED = "format.all.enabled";
-    public static final String FORMAT_ALL_DISABLED = "format.all.disabled";
-    public static final String RANDOM_ENABLED = "random.enabled";
-    public static final String RANDOM_DISABLED = "random.disabled";
-    public static final String LANGUAGE_SET = "language.set";
-    public static final String LANGUAGE_UNKNOWN = "language.unknown";
-    public static final String LANGUAGE_AVAILABLE = "language.available";
     
     // Update messages
     public static final String UPDATE_AVAILABLE = "update.available";
@@ -38,18 +22,6 @@ public class Messages {
     public static final String UPDATE_UP_TO_DATE = "update.up_to_date";
     public static final String UPDATE_CHECK_FAILED = "update.check_failed";
     public static final String UPDATE_DEV_VERSION = "update.dev_version";
-    
-    // Help messages
-    public static final String HELP_BRIDGESETUP = "help.bridgesetup";
-    public static final String HELP_STATUS = "help.status";
-    public static final String HELP_RESET = "help.reset";
-    public static final String HELP_NAME = "help.name";
-    public static final String HELP_COLOR = "help.color";
-    public static final String HELP_PLAYERCOLOR = "help.playercolor";
-    public static final String HELP_ACTIVATEALL = "help.activateall";
-    public static final String HELP_RANDOM = "help.random";
-    public static final String HELP_LANGUAGE = "help.language";
-    public static final String HELP_UPDATE = "help.update";
     
     // Color names
     public static final String COLOR_BLACK = "color.name.black";
@@ -75,9 +47,6 @@ public class Messages {
         add(MOD_LOADED, Language.FRENCH, "Guild Chat Formatter chargé !");
         
         // Bridge commands
-        add(BRIDGE_RESET, Language.ENGLISH, "§aBridge bot reset. Automatic detection enabled.");
-        add(BRIDGE_RESET, Language.FRENCH, "§aBot bridge réinitialisé. Détection automatique activée.");
-        
         add(BRIDGE_STATUS, Language.ENGLISH, "§7Bot: §e%s §7| Alias: §b%s §7| Colors: §b%s §7/ §3%s §7| Prefixes: §b%s §7/ §3%s §7| Mode: §e%s §7| Random: %s");
         add(BRIDGE_STATUS, Language.FRENCH, "§7Bot: §e%s §7| Alias: §b%s §7| Couleurs: §b%s §7/ §3%s §7| Préfixes: §b%s §7/ §3%s §7| Mode: §e%s §7| Aléatoire: %s");
         
@@ -92,85 +61,6 @@ public class Messages {
 
         add(BRIDGE_STATUS_RANDOM_OFF, Language.ENGLISH, "§coff");
         add(BRIDGE_STATUS_RANDOM_OFF, Language.FRENCH, "§cdésactivé");
-        
-        add(BRIDGE_DEFINED, Language.ENGLISH, "§aBridge bot defined: §e%s §7→ §b%s");
-        add(BRIDGE_DEFINED, Language.FRENCH, "§aBot bridge défini : §e%s §7→ §b%s");
-        
-        add(BRIDGE_NAME_RESET, Language.ENGLISH, "§aBridge name reset: §bBridge");
-        add(BRIDGE_NAME_RESET, Language.FRENCH, "§aNom du bridge réinitialisé: §bBridge");
-        
-        add(BRIDGE_NAME_SET, Language.ENGLISH, "§aBridge name: §b%s");
-        add(BRIDGE_NAME_SET, Language.FRENCH, "§aNom du bridge: §b%s");
-        
-        // Color commands
-        add(COLOR_BRIDGE_RESET, Language.ENGLISH, "§aBridge color reset: §b%s §7(&b)");
-        add(COLOR_BRIDGE_RESET, Language.FRENCH, "§aCouleur du bridge réinitialisée: §b%s §7(&b)");
-        
-        add(COLOR_BRIDGE_SET, Language.ENGLISH, "§aBridge color: §%s%s §7(&%s)");
-        add(COLOR_BRIDGE_SET, Language.FRENCH, "§aCouleur du bridge: §%s%s §7(&%s)");
-        
-        add(COLOR_PLAYER_RESET, Language.ENGLISH, "§aPlayer color reset: §3%s §7(&3)");
-        add(COLOR_PLAYER_RESET, Language.FRENCH, "§aCouleur du pseudo réinitialisée: §3%s §7(&3)");
-        
-        add(COLOR_PLAYER_SET, Language.ENGLISH, "§aPlayer color: §%s%s §7(&%s)");
-        add(COLOR_PLAYER_SET, Language.FRENCH, "§aCouleur du pseudo: §%s%s §7(&%s)");
-        
-        add(COLOR_UNKNOWN, Language.ENGLISH, "§cUnknown color: §f%s §7(values: %s)");
-        add(COLOR_UNKNOWN, Language.FRENCH, "§cCouleur inconnue: §f%s §7(valeurs: %s)");
-        
-        // Format all
-        add(FORMAT_ALL_ENABLED, Language.ENGLISH, "§aGuild formatting enabled for all messages.");
-        add(FORMAT_ALL_ENABLED, Language.FRENCH, "§aFormatage guilde activé pour tous les messages.");
-        
-        add(FORMAT_ALL_DISABLED, Language.ENGLISH, "§cGuild formatting disabled (bridge only).");
-        add(FORMAT_ALL_DISABLED, Language.FRENCH, "§cFormatage guilde désactivé (bridge uniquement).");
-
-        add(RANDOM_ENABLED, Language.ENGLISH, "§aRandom colors enabled.");
-        add(RANDOM_ENABLED, Language.FRENCH, "§aCouleurs aléatoires activées.");
-
-        add(RANDOM_DISABLED, Language.ENGLISH, "§cRandom colors disabled.");
-        add(RANDOM_DISABLED, Language.FRENCH, "§cCouleurs aléatoires désactivées.");
-        
-        // Language
-        add(LANGUAGE_SET, Language.ENGLISH, "§aLanguage set to: §e%s");
-        add(LANGUAGE_SET, Language.FRENCH, "§aLangue définie sur: §e%s");
-        
-        add(LANGUAGE_UNKNOWN, Language.ENGLISH, "§cUnknown language: §f%s §7(available: %s)");
-        add(LANGUAGE_UNKNOWN, Language.FRENCH, "§cLangue inconnue: §f%s §7(disponibles: %s)");
-        
-        add(LANGUAGE_AVAILABLE, Language.ENGLISH, "English, Français");
-        add(LANGUAGE_AVAILABLE, Language.FRENCH, "English, Français");
-        
-        // Help messages
-        add(HELP_BRIDGESETUP, Language.ENGLISH, "§e/bridgesetup <mcName> <alias> §7- define bot and alias");
-        add(HELP_BRIDGESETUP, Language.FRENCH, "§e/bridgesetup <nomMC> <alias> §7- définir le bot et l'alias");
-        
-        add(HELP_STATUS, Language.ENGLISH, "§e/bridge status §7- show configuration");
-        add(HELP_STATUS, Language.FRENCH, "§e/bridge status §7- afficher la config");
-        
-        add(HELP_RESET, Language.ENGLISH, "§e/bridge reset §7- reset everything");
-        add(HELP_RESET, Language.FRENCH, "§e/bridge reset §7- réinitialiser tout");
-        
-        add(HELP_NAME, Language.ENGLISH, "§e/bridgename <alias> §7- change alias");
-        add(HELP_NAME, Language.FRENCH, "§e/bridgename <alias> §7- changer l'alias");
-        
-        add(HELP_COLOR, Language.ENGLISH, "§e/bridgecolor <color> §7- bridge color (alias: /bc)");
-        add(HELP_COLOR, Language.FRENCH, "§e/bridgecolor <couleur> §7- couleur du bridge (alias: /bc)");
-        
-        add(HELP_PLAYERCOLOR, Language.ENGLISH, "§e/bridgeplayercolor <color> §7- player name color (alias: /bpc)");
-        add(HELP_PLAYERCOLOR, Language.FRENCH, "§e/bridgeplayercolor <couleur> §7- couleur du pseudo (alias: /bpc)");
-        
-        add(HELP_ACTIVATEALL, Language.ENGLISH, "§e/bridgeactivateall [off] §7- format all guild messages");
-        add(HELP_ACTIVATEALL, Language.FRENCH, "§e/bridgeactivateall [off] §7- activer le formatage pour toute la guilde");
-
-        add(HELP_RANDOM, Language.ENGLISH, "§e/bridge random [on|off] §7- toggle random colors");
-        add(HELP_RANDOM, Language.FRENCH, "§e/bridge random [on|off] §7- activer les couleurs aléatoires");
-        
-        add(HELP_LANGUAGE, Language.ENGLISH, "§e/bridgelanguage <language> §7- change language (English/Français)");
-        add(HELP_LANGUAGE, Language.FRENCH, "§e/bridgelanguage <langue> §7- changer la langue (English/Français)");
-        
-        add(HELP_UPDATE, Language.ENGLISH, "§e/bridge update §7- check for updates");
-        add(HELP_UPDATE, Language.FRENCH, "§e/bridge update §7- vérifier les mises à jour");
         
         // Color names
         add(COLOR_BLACK, Language.ENGLISH, "black");
