@@ -71,38 +71,6 @@ Configure colors, aliases, and options from Mod Menu (Cloth Config required).
 
 ---
 
-## 🎨 Available Colors
-
-Use the Mod Menu config screen to pick colors for aliases and player names.
-
----
-
-## 🛠️ Development
-
-### Build the project
-
-```cmd
-gradlew.bat build
-```
-
-The compiled JAR file can be found in `build/libs/GuildChatShortener-1.0.0.jar`.
-
-### Project Structure
-
-```
-src/main/
-├── java/com/guildchat/formatter/
-│   ├── GuildChatMod.java          # Main entry point
-│   ├── BridgeConfig.java          # Configuration management
-│   └── mixin/
-│       └── ChatHudMixin.java      # Injection to format messages
-└── resources/
-    ├── fabric.mod.json            # Mod metadata
-    └── guildchat-formatter.mixins.json
-```
-
----
-
 ## 📝 Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
