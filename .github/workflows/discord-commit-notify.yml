@@ -24,12 +24,18 @@ jobs:
           REPO="${{ github.repository }}"
           BRANCH="${{ github.ref_name }}"
           AUTHOR="${{ github.actor }}"
+          SHA="${{ github.sha }}"
+          SHORT_SHA="${SHA::7}"
           COMMIT_MSG="${{ github.event.head_commit.message }}"
           COMMIT_URL="${{ github.event.head_commit.url }}"
+          if [ -z "$COMMIT_URL" ]; then
+            COMMIT_URL="https://github.com/${REPO}/commit/${SHA}"
+          fi
           AVATAR_URL="https://github.com/${AUTHOR}.png"
 
           export TZ="Europe/Paris"
           TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+          TIMESTAMP_ISO="${{ github.event.head_commit.timestamp }}"
 
           CHANGED_FILES=$(git diff --stat HEAD~1 HEAD | tail -1 | awk '{print $1}')
           LINES_ADDED=$(git diff --stat HEAD~1 HEAD | tail -1 | awk '{print $4}')
@@ -48,7 +54,9 @@ jobs:
             --arg msg "$COMMIT_MSG" \
             --arg url "$COMMIT_URL" \
             --arg avatar "$AVATAR_URL" \
+            --arg short_sha "$SHORT_SHA" \
             --arg time "$TIMESTAMP" \
+            --arg timestamp_iso "$TIMESTAMP_ISO" \
             --arg changed "$CHANGED_FILES" \
             --arg added "$LINES_ADDED" \
             --arg deleted "$LINES_DELETED" \
@@ -57,22 +65,28 @@ jobs:
               "username": "GitHub",
               "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
               "embeds": [{
-                "title": "🚀 New push to \($repo)",
+                "title": "🚀 Push detecte sur \($repo)",
                 "url": $url,
                 "color": 5814783,
                 "author": {
                   "name": $author,
+                  "url": "https://github.com/\($author)",
                   "icon_url": $avatar
                 },
+                "description": "✨ **Nouveau commit sur** `\($branch)`\n\n📝 \(($msg | gsub("\\n"; " ") | if length > 220 then .[0:217] + "..." else . end))\n\n🔗 [Voir le commit](\($url))",
+                "thumbnail": {
+                  "url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+                },
                 "fields": [
-                  {"name": "📂 Repository", "value": $repo, "inline": true},
-                  {"name": "🌿 Branch", "value": $branch, "inline": true},
-                  {"name": "📝 Commit", "value": $msg},
-                  {"name": "📊 Changes", "value": "Files changed: **\($changed)**\nAdditions: **\($added)**\nDeletions: **\($deleted)**\nTotal lines changed: **\($total)**"}
+                  {"name": "🌿 Branche", "value": "`\($branch)`", "inline": true},
+                  {"name": "🧩 Commit", "value": "`\($short_sha)`", "inline": true},
+                  {"name": "👤 Auteur", "value": "@\($author)", "inline": true},
+                  {"name": "📊 Changements", "value": "Fichiers: **\($changed)**\n+ Lignes: **\($added)**\n- Lignes: **\($deleted)**\nTotal: **\($total)**"}
                 ],
                 "footer": {
                   "text": "GitHub Action • \($time)"
-                }
+                },
+                "timestamp": (if ($timestamp_iso | length) > 0 then $timestamp_iso else null end)
               }]
             }')
 
@@ -82,6 +96,7 @@ jobs:
               -d "$JSON_PAYLOAD" \
               "$DISCORD_WEBHOOK"
           fi
+
 
 
 
