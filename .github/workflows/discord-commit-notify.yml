@@ -10,10 +10,24 @@ permissions:
 
 jobs:
   notify-discord:
-    if: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}
     runs-on: ubuntu-latest
 
     steps:
+      - name: Debug context (safe)
+        run: |
+          echo "event=${{ github.event_name }}"
+          echo "repo=${{ github.repository }}"
+          echo "ref=${{ github.ref }}"
+          echo "branch=${{ github.ref_name }}"
+          echo "actor=${{ github.actor }}"
+          if [ -n "${{ secrets.DISCORD_WEBHOOK_URL }}" ]; then
+            echo "webhook_secret_present=true"
+          else
+            echo "webhook_secret_present=false"
+            echo "::error::Missing required secret DISCORD_WEBHOOK_URL"
+            exit 1
+          fi
+
       - name: Send structured commit message to Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -21,13 +35,14 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           ACTOR: ${{ github.actor }}
           SHA: ${{ github.sha }}
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-          COMMIT_TIMESTAMP: ${{ github.event.head_commit.timestamp }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message || github.event.commits[0].message || '' }}
+          COMMIT_TIMESTAMP: ${{ github.event.head_commit.timestamp || '' }}
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           import json
           import os
           import urllib.request
+          import urllib.error
 
           webhook = os.environ.get("DISCORD_WEBHOOK_URL", "")
           if not webhook:
@@ -44,22 +59,25 @@ jobs:
           if len(commit_message) > 240:
               commit_message = commit_message[:237] + "..."
 
+          embed = {
+              "title": "🚀 Nouveau commit pousse",
+              "description": f"📝 {commit_message}\n\n🔗 [Voir le commit]({commit_url})",
+              "color": 5814783,
+              "fields": [
+                  {"name": "📦 Repository", "value": repo or "unknown", "inline": True},
+                  {"name": "🌿 Branch", "value": branch or "unknown", "inline": True},
+                  {"name": "👤 Author", "value": actor or "unknown", "inline": True},
+                  {"name": "🧩 Commit", "value": f"`{short_sha}`", "inline": True},
+              ],
+          }
+
+          commit_timestamp = os.environ.get("COMMIT_TIMESTAMP", "").strip()
+          if commit_timestamp:
+              embed["timestamp"] = commit_timestamp
+
           payload = {
               "username": "GitHub Actions",
-              "embeds": [
-                  {
-                      "title": "🚀 Nouveau commit pousse",
-                      "description": f"📝 {commit_message}\n\n🔗 [Voir le commit]({commit_url})",
-                      "color": 5814783,
-                      "fields": [
-                          {"name": "📦 Repository", "value": repo or "unknown", "inline": True},
-                          {"name": "🌿 Branch", "value": branch or "unknown", "inline": True},
-                          {"name": "👤 Author", "value": actor or "unknown", "inline": True},
-                          {"name": "🧩 Commit", "value": f"`{short_sha}`", "inline": True},
-                      ],
-                      "timestamp": os.environ.get("COMMIT_TIMESTAMP") or None,
-                  }
-              ],
+              "embeds": [embed],
           }
 
           body = json.dumps(payload).encode("utf-8")
@@ -70,8 +88,15 @@ jobs:
               method="POST",
           )
 
-          with urllib.request.urlopen(request) as response:
-              status_code = response.getcode()
-              if status_code < 200 or status_code >= 300:
-                  raise SystemExit(f"Discord webhook failed with status code {status_code}")
+          try:
+              with urllib.request.urlopen(request) as response:
+                  status_code = response.getcode()
+                  print(f"Discord response status: {status_code}")
+                  if status_code < 200 or status_code >= 300:
+                      raise SystemExit(f"Discord webhook failed with status code {status_code}")
+          except urllib.error.HTTPError as error:
+              error_body = error.read().decode("utf-8", errors="replace")
+              print(f"::error::Discord webhook HTTP {error.code}: {error_body}")
+              raise
           PY
+
