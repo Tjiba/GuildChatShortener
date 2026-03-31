@@ -1,7 +1,7 @@
 # Changelog
 
 ## 1.3.0 - 2026-03-20
-- ✨ V1/V2/V3 labels display correctly even with a custom bridge alias
+- ✨ V1/V2/V3 labels display correctly even with a custom bridge alias 
 - ⚙️ Config access via Mod Menu (Cloth Config required)
 - ✅ New shortcuts: `/gcs` and `/guildchatshortener` to open config
 - 🧹 Command list trimmed to `/bridge status` plus config shortcuts
