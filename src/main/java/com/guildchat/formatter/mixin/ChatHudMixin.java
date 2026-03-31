@@ -2,12 +2,16 @@ package com.guildchat.formatter.mixin;
 
 import com.guildchat.formatter.BridgeConfig;
 import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +35,15 @@ import java.util.regex.Pattern;
  */
 @Mixin(ChatHud.class)
 public class ChatHudMixin {
+
+    @Shadow @Final private List<ChatHudLine.Visible> visibleMessages;
+    @Shadow @Final private List<ChatHudLine> messages;
+
+    @Unique
+    private String gcsLastMessageBase = null;
+
+    @Unique
+    private int gcsLastMessageCount = 1;
 
     // Supprime tous les codes couleur Minecraft (§0-§9, §a-§f, §k-§r)
     @Unique
@@ -94,11 +107,11 @@ public class ChatHudMixin {
 
         // 2. Seulement les messages de guild / officer (longues formes ou abrégées)
         if (!raw.startsWith("Guild > ") && !raw.startsWith("Officer > ") 
-            && !raw.startsWith("G > ") && !raw.startsWith("O > ")) return original;
+            && !raw.startsWith("G > ") && !raw.startsWith("O > ")) return compactMessage(original);
 
         // 3. Test du pattern bridge
         Matcher m = BRIDGE_HEADER.matcher(raw);
-        if (!m.matches()) return original; // message guild normal → on ne touche à rien
+        if (!m.matches()) return compactMessage(original); // message guild normal → on ne touche à rien
 
         // 4. Extraction des groupes
         String headerChannel = m.group(1); // Guild ou Officer
@@ -108,7 +121,7 @@ public class ChatHudMixin {
         // 5. Vérification du bot : si botMCName est défini, on ne formate QUE ce bot
         BridgeConfig cfg = BridgeConfig.get();
         if (cfg.botMCName != null && !cfg.botMCName.equalsIgnoreCase(botMC)) {
-            return original; // ce n'est pas notre bot → on ne touche à rien
+            return compactMessage(original); // ce n'est pas notre bot → on ne touche à rien
         }
         String channelMarker = extractChannelMarker(payload);
         boolean hasVersionTag = hasGuildVersionTag(payload);
@@ -116,7 +129,7 @@ public class ChatHudMixin {
         boolean isOfficerChat = "Officer".equalsIgnoreCase(headerChannel)
             || "O".equalsIgnoreCase(channelMarker);
         if (!isBridgePayload && !cfg.formatAllGuild) {
-            return original; // pas de marqueur canal/version et mode guilde inactif → on ne touche à rien
+            return compactMessage(original); // pas de marqueur canal/version et mode guilde inactif → on ne touche à rien
         }
 
         String prefix = resolvePrefix(cfg, isOfficerChat);
@@ -127,14 +140,14 @@ public class ChatHudMixin {
         // 6. Nettoyage du payload pour supporter plusieurs formats (V1/V2/V3)
         if (!isBridgePayload) {
             String message = payload.trim();
-            if (message.isEmpty()) return original;
+            if (message.isEmpty()) return compactMessage(original);
             String playerColorCode = cfg.randomMode
                 ? randomColorCode()
                 : safeColorCode(cfg.discordNameColor);
             String formatted = "§" + prefixColorCode + prefix + "§8 > "
                 + "§" + playerColorCode + botMC
                 + "§8: §f" + message;
-            return Text.literal(formatted);
+            return compactMessage(Text.literal(formatted));
         }
         String cleaned = stripLeadingNonVersionTag(payload);
 
@@ -160,11 +173,11 @@ public class ChatHudMixin {
             message = cleaned.substring(sepIndex + 2).trim();
         } else {
             sepIndex = cleaned.indexOf(" > ");
-            if (sepIndex < 0) return original;
+            if (sepIndex < 0) return compactMessage(original);
             discord = cleaned.substring(0, sepIndex).trim();
             message = cleaned.substring(sepIndex + 3).trim();
         }
-        if (discord.isEmpty() || message.isEmpty()) return original;
+        if (discord.isEmpty() || message.isEmpty()) return compactMessage(original);
 
         // 7. Construction du message formaté
         //    Format : "G > v2 > PseudoDiscord : message" (sinon fallback alias, ex: Bridge)
@@ -187,7 +200,39 @@ public class ChatHudMixin {
             + "§" + playerColorCode + discord
             + "§8 : §f" + message;
 
-        return Text.literal(formatted);
+        return compactMessage(Text.literal(formatted));
+    }
+
+    @Unique
+    private Text compactMessage(Text input) {
+        if (input == null) return null;
+
+        String current = input.getString();
+        if (current.isBlank()) {
+            gcsLastMessageBase = null;
+            gcsLastMessageCount = 1;
+            return input;
+        }
+
+        if (current.equals(gcsLastMessageBase)) {
+            gcsLastMessageCount++;
+            removeLastChatEntries();
+            return Text.literal(current + " §7(x" + gcsLastMessageCount + ")");
+        }
+
+        gcsLastMessageBase = current;
+        gcsLastMessageCount = 1;
+        return input;
+    }
+
+    @Unique
+    private void removeLastChatEntries() {
+        if (!visibleMessages.isEmpty()) {
+            visibleMessages.remove(0);
+        }
+        if (!messages.isEmpty()) {
+            messages.remove(0);
+        }
     }
 
     @Unique

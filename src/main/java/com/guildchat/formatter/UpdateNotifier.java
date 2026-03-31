@@ -9,6 +9,7 @@ public class UpdateNotifier {
     
     private static boolean hasChecked = false;
     private static boolean updatePendingRestart = false;
+    private static boolean hypixelRestartReminderShown = false;
     
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -21,7 +22,8 @@ public class UpdateNotifier {
         });
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            if (updatePendingRestart && isHypixelServer(client)) {
+            if (updatePendingRestart && !hypixelRestartReminderShown && isHypixelServer(client)) {
+                hypixelRestartReminderShown = true;
                 sendClientMessage(client, Messages.get(Messages.UPDATE_RESTART_ON_HYPIXEL_JOIN));
             }
         });
@@ -86,6 +88,7 @@ public class UpdateNotifier {
         UpdateDownloader.downloadLatestReleaseAsync().thenAccept(result -> {
             if (result.isSuccess()) {
                 updatePendingRestart = true;
+                hypixelRestartReminderShown = false;
                 sendClientMessage(client, Messages.format(Messages.UPDATE_AUTO_SUCCESS, result.getMessage()));
                 sendClientMessage(client, Messages.get(Messages.UPDATE_RESTART_REQUIRED));
             } else {
