@@ -217,7 +217,7 @@ public class ChatHudMixin {
         if (current.equals(gcsLastMessageBase)) {
             gcsLastMessageCount++;
             removeLastChatEntries();
-            return Text.literal(current + " §7(x" + gcsLastMessageCount + ")");
+            return input.copy().append(" §7(x" + gcsLastMessageCount + ")");
         }
 
         gcsLastMessageBase = current;
