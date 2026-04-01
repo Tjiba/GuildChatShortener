@@ -1,6 +1,6 @@
 <div align="center">
 
-# GuildZip
+# 🏰 GuildZip 💬 🗜️
 
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21-brightgreen?style=flat-square)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Fabric-0.18.4-orange?style=flat-square)](https://fabricmc.net/)

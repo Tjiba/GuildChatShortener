@@ -1,18 +1,19 @@
 <div align="center">
 
-# GuildZip
+# 📂 GuildZip 📂
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21-brightgreen?style=flat-square)](https://www.minecraft.net/)
-[![Fabric](https://img.shields.io/badge/Fabric-0.18.4-orange?style=flat-square)](https://fabricmc.net/)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](./LICENSE)
+**Your guild chat, finally readable.**
+
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21-brightgreen)](https://www.minecraft.net/)
+[![Fabric](https://img.shields.io/badge/Fabric-0.18.4-orange)](https://fabricmc.net/)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](./LICENSE)
 [![Build](https://github.com/Tjiba/GuildZip/actions/workflows/build.yml/badge.svg)](https://github.com/Tjiba/GuildZip/actions/workflows/build.yml)
-![France](https://img.shields.io/badge/Made%20in-France-blue?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iI0VEMjkzOSIvPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSIjRkZGIi8+CiAgPHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiMwMDIzOTUiLz4KPC9zdmc+)
+![France](https://img.shields.io/badge/Made%20in-France-blue&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAKICAKICAKPC9zdmc+)
 
 **English** | [Français](README.fr.md)
 
 <img width="265" height="61" alt="preview" src="https://github.com/user-attachments/assets/39af7b73-32f2-4ae7-962c-0e8b86914a77" />
 
-**Your guild chat, finally readable.**
 
 </div>
 
