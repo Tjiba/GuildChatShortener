@@ -65,14 +65,40 @@ public class UpdateDownloader {
             connection.setReadTimeout(15000);
             connection.setRequestProperty("User-Agent", "GuildZip-Mod-Updater");
 
+            // Ajouter le support des redirects
+            connection.setInstanceFollowRedirects(true);
+            HttpURLConnection.setFollowRedirects(true);
+
             int responseCode = connection.getResponseCode();
+
+            // Gérer les redirects manuellement si nécessaire
+            if (responseCode == 301 || responseCode == 302) {
+                String newLocation = connection.getHeaderField("Location");
+                if (newLocation != null) {
+                    connection.disconnect();
+                    connection = (HttpURLConnection) new URI(newLocation).toURL().openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.setConnectTimeout(10000);
+                    connection.setReadTimeout(15000);
+                    connection.setRequestProperty("User-Agent", "GuildZip-Mod-Updater");
+                    responseCode = connection.getResponseCode();
+                }
+            }
+
             if (responseCode < 200 || responseCode >= 300) {
+                connection.disconnect();
                 return new DownloadResult(false, "Download failed: HTTP " + responseCode, null);
             }
 
             try (InputStream in = connection.getInputStream();
                  OutputStream out = Files.newOutputStream(tmpPath)) {
-                in.transferTo(out);
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            } finally {
+                connection.disconnect();
             }
 
             Files.move(tmpPath, finalPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);

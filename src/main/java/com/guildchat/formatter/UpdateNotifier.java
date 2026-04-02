@@ -13,11 +13,12 @@ public class UpdateNotifier {
     
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            // Afficher le message de mise à jour au premier join du serveur
+            // Vérifier les mises à jour silencieusement au premier join du serveur
+            // sans afficher de messages automatiquement (sauf lors de /gz update)
             if (!hasChecked && client.player != null) {
                 hasChecked = true;
 
-                runUpdateFlow(client, false);
+                runUpdateFlowSilently();
             }
         });
 
@@ -35,6 +36,26 @@ public class UpdateNotifier {
         }
         String address = client.getCurrentServerEntry().address.toLowerCase();
         return address.contains("hypixel.net");
+    }
+
+    private static void runUpdateFlowSilently() {
+        // Effectue la vérification de mise à jour en arrière-plan sans afficher les messages
+        VersionManager.resetVersionCache();
+        String currentVersion = VersionManager.CURRENT_VERSION != null ? VersionManager.CURRENT_VERSION : "unknown";
+
+        VersionManager.checkVersionUpdateAsyncInternal().thenRun(() -> {
+            String latestVersion = VersionManager.getLatestVersionOnline();
+            if (latestVersion == null) {
+                return;
+            }
+
+            int comparison = VersionManager.compareVersions(currentVersion, latestVersion);
+
+            if (comparison < 0) {
+                // Mise à jour disponible - ne pas afficher de message automatiquement
+                // Les mises à jour se verront seulement via /gz update
+            }
+        });
     }
 
     private static void runUpdateFlow(MinecraftClient client, boolean manual) {
