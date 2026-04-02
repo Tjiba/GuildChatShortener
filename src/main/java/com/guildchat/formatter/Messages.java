@@ -139,8 +139,8 @@ public class Messages {
         add(UPDATE_AUTO_START, Language.ENGLISH, "§eAuto-updater: downloading v%s...");
         add(UPDATE_AUTO_START, Language.FRENCH, "§eAuto-updater : téléchargement de la v%s...");
 
-        add(UPDATE_AUTO_SUCCESS, Language.ENGLISH, "§aAuto-updater: %s");
-        add(UPDATE_AUTO_SUCCESS, Language.FRENCH, "§aAuto-updater : %s");
+        add(UPDATE_AUTO_SUCCESS, Language.ENGLISH, "§aUpdate downloaded: %s");
+        add(UPDATE_AUTO_SUCCESS, Language.FRENCH, "§aMise à jour téléchargée : %s");
 
         add(UPDATE_AUTO_FAILED, Language.ENGLISH, "§cAuto-updater failed: %s");
         add(UPDATE_AUTO_FAILED, Language.FRENCH, "§cAuto-updater échoué : %s");

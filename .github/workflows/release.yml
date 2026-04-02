@@ -29,31 +29,24 @@ jobs:
         id: tag_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-      - name: Get mod jar path
-        id: jar_path
-        run: echo "JAR_PATH=$(ls build/libs/*.jar | head -1)" >> $GITHUB_OUTPUT
+      - name: Get mod jar file
+        id: jar_file
+        run: |
+          JAR_FILE=$(ls build/libs/*.jar | grep -v sources | grep -v javadoc | head -1)
+          echo "JAR_PATH=$JAR_FILE" >> $GITHUB_OUTPUT
+          echo "JAR_NAME=$(basename $JAR_FILE)" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: create_release
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag_version.outputs.VERSION }}
-          release_name: Release ${{ steps.tag_version.outputs.VERSION }}
+          name: GuildZip ${{ steps.tag_version.outputs.VERSION }}
           body: |
-            GuildZip ${{ steps.tag_version.outputs.VERSION }}
+            # GuildZip ${{ steps.tag_version.outputs.VERSION }}
             
             Download the mod JAR below and place it in your mods folder.
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.jar_path.outputs.JAR_PATH }}
-          asset_name: GuildZip-${{ steps.tag_version.outputs.VERSION }}.jar
-          asset_content_type: application/java-archive
+          files: ${{ steps.jar_file.outputs.JAR_PATH }}
 
