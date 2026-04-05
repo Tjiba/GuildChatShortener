@@ -102,7 +102,9 @@ public class UpdateDownloader {
                 connection.disconnect();
             }
 
-            // Renommer les anciennes versions en .jar.old (sera supprimé au prochain lancement)
+            Files.move(tmpPath, finalPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+
+            // Renommer les anciens JARs GuildZip en .jar.old (supprimés au prochain démarrage)
             try (Stream<Path> entries = Files.list(modsDir)) {
                 entries.filter(p -> {
                     String name = p.getFileName().toString().toLowerCase();
@@ -117,7 +119,6 @@ public class UpdateDownloader {
                 });
             }
 
-            Files.move(tmpPath, finalPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             return new DownloadResult(true, "Update downloaded to: " + finalPath.getFileName(), finalPath);
         } catch (Exception e) {
             GuildChatMod.LOGGER.error("Auto-update download failed", e);

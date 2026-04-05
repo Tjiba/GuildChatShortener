@@ -40,6 +40,19 @@ public class GuildChatMod implements ClientModInitializer {
                             return 1;
                         })
                     )
+                    .then(ClientCommandManager.literal("dismiss")
+                        .executes(ctx -> {
+                            UpdateNotifier.dismiss();
+                            return 1;
+                        })
+                    )
+                    .then(ClientCommandManager.literal("noupdate")
+                        .executes(ctx -> {
+                            UpdateNotifier.disableNotification();
+                            feedback(ctx.getSource().getClient(), "§7[GZ] Update notifications disabled. Re-enable in config.");
+                            return 1;
+                        })
+                    )
                     .executes(ctx -> {
                         MinecraftClient client = ctx.getSource().getClient();
                         if (isModMenuLoaded()) {

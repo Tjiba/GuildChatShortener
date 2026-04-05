@@ -52,6 +52,9 @@ public class BridgeConfig {
     // Active le téléchargement automatique de la dernière version stable lorsqu'elle est disponible
     public boolean autoUpdaterEnabled = true;
 
+    // Masque la notification de mise à jour au démarrage
+    public boolean hideUpdateNotification = false;
+
     // Active l'affichage de la version de guilde (v1/v2/v3) a la place de l'alias bridge
     public boolean versionFormattingEnabled = true;
 
